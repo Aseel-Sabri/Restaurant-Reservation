@@ -23,5 +23,10 @@ public class RestaurantReservationDbContext : DbContext
     {
         modelBuilder.Entity<MenuItem>()
             .HasKey(item => item.ItemId);
+
+        foreach (var foreignKey in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+        {
+            foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
+        }
     }
 }
