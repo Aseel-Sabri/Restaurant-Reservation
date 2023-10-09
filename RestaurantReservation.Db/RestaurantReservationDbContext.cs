@@ -36,5 +36,7 @@ public class RestaurantReservationDbContext : DbContext
         {
             foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
         }
+
+        DataSeeder.SeedData(modelBuilder);
     }
 }
