@@ -24,6 +24,14 @@ public class RestaurantReservationDbContext : DbContext
         modelBuilder.Entity<MenuItem>()
             .HasKey(item => item.ItemId);
 
+        modelBuilder.Entity<MenuItem>()
+            .Property(menuItem => menuItem.Price)
+            .HasColumnType("decimal(18, 2)");
+
+        modelBuilder.Entity<Order>()
+            .Property(order => order.TotalAmount)
+            .HasColumnType("decimal(18, 2)");
+
         foreach (var foreignKey in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
         {
             foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
