@@ -22,6 +22,9 @@ public class AppConfig
             .AddSingleton<ICustomerRepository, CustomerRepository>()
             .AddSingleton<ICustomerService, CustomerService>()
             .AddSingleton<CustomerOperations>()
+            .AddSingleton<IEmployeeRepository, EmployeeRepository>()
+            .AddSingleton<IEmployeeService, EmployeeService>()
+            .AddSingleton<EmployeeOperations>()
             .BuildServiceProvider();
     }
 
