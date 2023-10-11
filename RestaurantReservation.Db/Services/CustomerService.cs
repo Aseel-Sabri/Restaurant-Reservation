@@ -16,7 +16,7 @@ public class CustomerService : ICustomerService
 
     public Result<int> CreateCustomer(CustomerDto customerDto)
     {
-        if (HasAnyNullOrEmptyFields(customerDto))
+        if (customerDto.HasAnyNullOrEmptyFields())
         {
             return Result.Fail($"All Customer Fields Must Be provided");
         }
@@ -74,14 +74,5 @@ public class CustomerService : ICustomerService
             Email = customer.Email,
             PhoneNumber = customer.PhoneNumber
         };
-    }
-
-    bool HasAnyNullOrEmptyFields(object myObject)
-    {
-        return
-            (from propertyInfo in myObject.GetType().GetProperties()
-                where propertyInfo.PropertyType == typeof(string)
-                select (string)propertyInfo.GetValue(myObject))
-            .Any(string.IsNullOrEmpty);
     }
 }
