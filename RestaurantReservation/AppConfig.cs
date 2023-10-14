@@ -28,6 +28,9 @@ public class AppConfig
             .AddSingleton<IEmployeeRepository, EmployeeRepository>()
             .AddSingleton<IEmployeeService, EmployeeService>()
             .AddSingleton<EmployeeOperations>()
+            .AddSingleton<ITableRepository, TableRepository>()
+            .AddSingleton<ITableService, TableService>()
+            .AddSingleton<TableOperations>()
             .BuildServiceProvider();
     }
 
