@@ -31,6 +31,9 @@ public class AppConfig
             .AddSingleton<ITableRepository, TableRepository>()
             .AddSingleton<ITableService, TableService>()
             .AddSingleton<TableOperations>()
+            .AddSingleton<IReservationRepository, ReservationRepository>()
+            .AddSingleton<IReservationService, ReservationService>()
+            .AddSingleton<ReservationOperations>()
             .BuildServiceProvider();
     }
 
