@@ -75,4 +75,13 @@ public class EmployeeOperations
 
         Console.WriteLine();
     }
+
+    public void ListManagers()
+    {
+        _employeeService.GetManagers().ForEach(manager =>
+        {
+            Console.WriteLine(manager);
+            Console.WriteLine();
+        });
+    }
 }

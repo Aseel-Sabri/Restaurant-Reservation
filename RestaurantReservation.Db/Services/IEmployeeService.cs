@@ -8,4 +8,5 @@ public interface IEmployeeService
     Result<int> CreateEmployee(EmployeeDto employeeDto);
     Result<EmployeeDto> UpdateEmployee(EmployeeDto employeeDto);
     Result DeleteEmployee(int employeeId);
+    List<EmployeeDto> GetManagers();
 }

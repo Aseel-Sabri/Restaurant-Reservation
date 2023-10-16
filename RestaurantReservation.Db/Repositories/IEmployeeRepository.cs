@@ -9,4 +9,5 @@ public interface IEmployeeRepository
     bool DeleteEmployee(int employeeId);
     Employee? FindEmployeeById(int employeeId);
     bool HasEmployeeById(int employeeId);
+    List<Employee> GetManagers();
 }

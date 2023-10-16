@@ -33,6 +33,12 @@ public class EmployeeRepository : IEmployeeRepository
         return _dbContext.SaveChanges() > 0;
     }
 
+    public List<Employee> GetManagers()
+    {
+        var position = "Manager";
+        return _dbContext.Employees.Where(employee => employee.Position == position).ToList();
+    }
+
     public Employee? FindEmployeeById(int employeeId)
     {
         return _dbContext.Employees.Find(employeeId);

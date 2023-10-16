@@ -77,6 +77,11 @@ public class EmployeeService : IEmployeeService
         }
     }
 
+    public List<EmployeeDto> GetManagers()
+    {
+        return _employeeRepository.GetManagers().Select(MapToEmployeeDto).ToList();
+    }
+
     private EmployeeDto MapToEmployeeDto(Employee employee)
     {
         return new EmployeeDto()
