@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RestaurantReservation.Db.KeylessEntities;
 using RestaurantReservation.Db.Models;
 
 namespace RestaurantReservation.Db.Repositories;
@@ -44,6 +45,11 @@ public class EmployeeRepository : IEmployeeRepository
         return _dbContext.Orders
             .Where(order => order.EmployeeId == employeeId)
             .Average(order => order.TotalAmount);
+    }
+
+    public List<EmployeeDetails> GetEmployeesDetails()
+    {
+        return _dbContext.EmployeesDetails.ToList();
     }
 
     public Employee? FindEmployeeById(int employeeId)

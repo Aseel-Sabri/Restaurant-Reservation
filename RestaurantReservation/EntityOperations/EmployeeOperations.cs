@@ -99,4 +99,21 @@ public class EmployeeOperations
         Console.WriteLine(result.Value);
         Console.WriteLine();
     }
+
+    public void GetEmployeesDetails()
+    {
+        var employeesDetails = _employeeService.GetEmployeesDetails();
+
+        if (!employeesDetails.Any())
+        {
+            Console.WriteLine($"No Employees Were Added");
+            return;
+        }
+
+        employeesDetails.ForEach(employeeDetails =>
+        {
+            Console.WriteLine(employeeDetails);
+            Console.WriteLine();
+        });
+    }
 }

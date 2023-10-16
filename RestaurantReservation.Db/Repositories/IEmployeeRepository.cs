@@ -1,4 +1,5 @@
-﻿using RestaurantReservation.Db.Models;
+﻿using RestaurantReservation.Db.KeylessEntities;
+using RestaurantReservation.Db.Models;
 
 namespace RestaurantReservation.Db.Repositories;
 
@@ -11,4 +12,5 @@ public interface IEmployeeRepository
     bool HasEmployeeById(int employeeId);
     List<Employee> GetManagers();
     double CalculateAverageOrderAmount(int employeeId);
+    List<EmployeeDetails> GetEmployeesDetails();
 }

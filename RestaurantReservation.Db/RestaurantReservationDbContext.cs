@@ -15,6 +15,7 @@ public class RestaurantReservationDbContext : DbContext
     public DbSet<Restaurant> Restaurants { get; set; }
     public DbSet<Table> Tables { get; set; }
     public DbSet<ReservationDetails> ReservationsDetails { get; set; }
+    public DbSet<EmployeeDetails> EmployeesDetails { get; set; }
 
     public RestaurantReservationDbContext(DbContextOptions<RestaurantReservationDbContext> options)
         : base(options)
@@ -26,6 +27,10 @@ public class RestaurantReservationDbContext : DbContext
         modelBuilder.Entity<ReservationDetails>()
             .HasNoKey()
             .ToView("vw_ReservationDetails");
+
+        modelBuilder.Entity<EmployeeDetails>()
+            .HasNoKey()
+            .ToView("vw_EmployeeDetails");
 
         modelBuilder.Entity<MenuItem>()
             .HasKey(item => item.ItemId);

@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using RestaurantReservation.Db.DTOs;
+using RestaurantReservation.Db.KeylessEntities;
 using RestaurantReservation.Db.Models;
 using RestaurantReservation.Db.Repositories;
 
@@ -80,6 +81,11 @@ public class EmployeeService : IEmployeeService
     public List<EmployeeDto> GetManagers()
     {
         return _employeeRepository.GetManagers().Select(MapToEmployeeDto).ToList();
+    }
+
+    public List<EmployeeDetails> GetEmployeesDetails()
+    {
+        return _employeeRepository.GetEmployeesDetails();
     }
 
     public Result<double> CalculateAverageOrderAmount(int employeeId)
