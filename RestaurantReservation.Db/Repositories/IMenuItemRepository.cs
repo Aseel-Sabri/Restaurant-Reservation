@@ -9,4 +9,5 @@ public interface IMenuItemRepository
     bool DeleteItem(int itemId);
     MenuItem? FindItemById(int itemId);
     bool HasItemById(int itemId);
+    List<MenuItem> ListOrderedMenuItems(int reservationId);
 }

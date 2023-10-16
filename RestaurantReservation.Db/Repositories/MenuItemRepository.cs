@@ -33,6 +33,26 @@ public class MenuItemRepository : IMenuItemRepository
         return _dbContext.SaveChanges() > 0;
     }
 
+    public List<MenuItem> ListOrderedMenuItems(int reservationId)
+    {
+        var menuItems = _dbContext.OrderItems
+            .Where(orderItem => orderItem.Order.ReservationId == reservationId)
+            .Select(orderItem =>
+                new MenuItem()
+                {
+                    Description = orderItem.Item.Description,
+                    Name = orderItem.Item.Name,
+                    ItemId = orderItem.Item.ItemId,
+                    Price = orderItem.Item.Price,
+                    RestaurantId = orderItem.Item.RestaurantId
+                }
+            )
+            .Distinct();
+
+
+        return menuItems.ToList();
+    }
+
     public MenuItem? FindItemById(int itemId)
     {
         return _dbContext.MenuItems.Find(itemId);

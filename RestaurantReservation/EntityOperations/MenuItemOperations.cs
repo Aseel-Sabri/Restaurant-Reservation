@@ -72,4 +72,31 @@ public class MenuItemOperations
 
         Console.WriteLine();
     }
+
+    public void ListOrderedMenuItems(int reservationId)
+    {
+        var result = _menuItemService.ListOrderedMenuItems(reservationId);
+
+        if (result.IsFailed)
+        {
+            result.Errors.ForEach(error => Console.WriteLine(error.Message));
+            Console.WriteLine();
+            return;
+        }
+
+        var menuItems = result.Value;
+
+        if (!menuItems.Any())
+        {
+            Console.WriteLine($"There is No Menu Items for reservation With ID {reservationId}");
+            Console.WriteLine();
+            return;
+        }
+
+        menuItems.ForEach(menuItem =>
+        {
+            Console.WriteLine(menuItem);
+            Console.WriteLine();
+        });
+    }
 }

@@ -11,13 +11,15 @@ public class MenuItemService : IMenuItemService
     private readonly IMenuItemRepository _menuItemRepository;
     private readonly IRestaurantRepository _restaurantRepository;
     private readonly IOrderRepository _orderRepository;
+    private readonly IReservationRepository _reservationRepository;
 
     public MenuItemService(IMenuItemRepository menuItemRepository, IRestaurantRepository restaurantRepository,
-        IOrderRepository orderRepository)
+        IOrderRepository orderRepository, IReservationRepository reservationRepository)
     {
         _menuItemRepository = menuItemRepository;
         _restaurantRepository = restaurantRepository;
         _orderRepository = orderRepository;
+        _reservationRepository = reservationRepository;
     }
 
     public Result<int> CreateItem(MenuItemDto menuItemDto)
@@ -87,6 +89,16 @@ public class MenuItemService : IMenuItemService
         {
             return Result.Fail($"Could Not Delete MenuItem With ID {menuItemId}, It May Have Related Data");
         }
+    }
+
+    public Result<List<MenuItemDto>> ListOrderedMenuItems(int reservationId)
+    {
+        if (!_reservationRepository.HasReservationById(reservationId))
+            return Result.Fail($"No Reservation With ID {reservationId} Exists");
+
+        return _menuItemRepository.ListOrderedMenuItems(reservationId)
+            .Select(MapToMenuItemDto)
+            .ToList();
     }
 
 
