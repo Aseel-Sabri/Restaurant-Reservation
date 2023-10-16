@@ -99,4 +99,21 @@ public class ReservationOperations
             Console.WriteLine();
         });
     }
+
+    public void GetReservationsWithCustomerAndRestaurantDetails()
+    {
+        var reservationDetailsList = _reservationService.GetReservationsWithCustomerAndRestaurantDetails();
+
+        if (!reservationDetailsList.Any())
+        {
+            Console.WriteLine($"No Reservations Were Made");
+            return;
+        }
+
+        reservationDetailsList.ForEach(reservationDetails =>
+        {
+            Console.WriteLine(reservationDetails);
+            Console.WriteLine();
+        });
+    }
 }

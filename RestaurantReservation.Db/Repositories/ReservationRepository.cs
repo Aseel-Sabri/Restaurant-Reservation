@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RestaurantReservation.Db.KeylessEntities;
 using RestaurantReservation.Db.Models;
 
 namespace RestaurantReservation.Db.Repositories;
@@ -36,6 +37,11 @@ public class ReservationRepository : IReservationRepository
     public List<Reservation> GetReservationsByCustomer(int customerId)
     {
         return _dbContext.Reservations.Where(reservation => reservation.CustomerId == customerId).ToList();
+    }
+
+    public List<ReservationDetails> GetReservationsWithCustomerAndRestaurantDetails()
+    {
+        return _dbContext.ReservationsDetails.ToList();
     }
 
     public Reservation? FindReservationById(int reservationId)

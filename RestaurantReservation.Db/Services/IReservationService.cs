@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using RestaurantReservation.Db.DTOs;
+using RestaurantReservation.Db.KeylessEntities;
 
 namespace RestaurantReservation.Db.Services;
 
@@ -9,4 +10,5 @@ public interface IReservationService
     Result<ReservationDto> UpdateReservation(ReservationDto reservationDto);
     Result DeleteReservation(int reservationId);
     Result<List<ReservationDto>> GetReservationsByCustomer(int customerId);
+    List<ReservationDetails> GetReservationsWithCustomerAndRestaurantDetails();
 }

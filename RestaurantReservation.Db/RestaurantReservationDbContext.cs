@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RestaurantReservation.Db.KeylessEntities;
 using RestaurantReservation.Db.Models;
 
 namespace RestaurantReservation.Db;
@@ -13,6 +14,7 @@ public class RestaurantReservationDbContext : DbContext
     public DbSet<Reservation> Reservations { get; set; }
     public DbSet<Restaurant> Restaurants { get; set; }
     public DbSet<Table> Tables { get; set; }
+    public DbSet<ReservationDetails> ReservationsDetails { get; set; }
 
     public RestaurantReservationDbContext(DbContextOptions<RestaurantReservationDbContext> options)
         : base(options)
@@ -21,6 +23,10 @@ public class RestaurantReservationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ReservationDetails>()
+            .HasNoKey()
+            .ToView("vw_ReservationDetails");
+
         modelBuilder.Entity<MenuItem>()
             .HasKey(item => item.ItemId);
 

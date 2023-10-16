@@ -1,4 +1,5 @@
-﻿using RestaurantReservation.Db.Models;
+﻿using RestaurantReservation.Db.KeylessEntities;
+using RestaurantReservation.Db.Models;
 
 namespace RestaurantReservation.Db.Repositories;
 
@@ -10,4 +11,5 @@ public interface IReservationRepository
     Reservation? FindReservationById(int reservationId);
     bool HasReservationById(int reservationId);
     List<Reservation> GetReservationsByCustomer(int customerId);
+    List<ReservationDetails> GetReservationsWithCustomerAndRestaurantDetails();
 }

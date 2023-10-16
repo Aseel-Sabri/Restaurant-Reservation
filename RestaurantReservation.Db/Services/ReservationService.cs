@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using RestaurantReservation.Db.DTOs;
+using RestaurantReservation.Db.KeylessEntities;
 using RestaurantReservation.Db.Models;
 using RestaurantReservation.Db.Repositories;
 
@@ -115,6 +116,11 @@ public class ReservationService : IReservationService
         return _reservationRepository.GetReservationsByCustomer(customerId)
             .Select(MapToReservationDto)
             .ToList();
+    }
+
+    public List<ReservationDetails> GetReservationsWithCustomerAndRestaurantDetails()
+    {
+        return _reservationRepository.GetReservationsWithCustomerAndRestaurantDetails();
     }
 
     private ReservationDto MapToReservationDto(Reservation reservation)
