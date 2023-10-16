@@ -34,6 +34,12 @@ public class AppConfig
             .AddSingleton<IReservationRepository, ReservationRepository>()
             .AddSingleton<IReservationService, ReservationService>()
             .AddSingleton<ReservationOperations>()
+            .AddSingleton<IOrderRepository, OrderRepository>()
+            .AddSingleton<IMenuItemRepository, MenuItemRepository>()
+            .AddSingleton<IOrderService, OrderService>()
+            .AddSingleton<IMenuItemService, MenuItemService>()
+            .AddSingleton<OrderOperations>()
+            .AddSingleton<MenuItemOperations>()
             .BuildServiceProvider();
     }
 
