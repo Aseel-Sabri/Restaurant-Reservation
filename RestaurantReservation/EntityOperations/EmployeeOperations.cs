@@ -14,7 +14,7 @@ public class EmployeeOperations
 
     public void CreateEmployee()
     {
-        var employee = new EmployeeDto()
+        var employeeDto = new EmployeeDto()
         {
             FirstName = "Khulood",
             LastName = "Sabri",
@@ -23,7 +23,7 @@ public class EmployeeOperations
         };
 
 
-        var result = _employeeService.CreateEmployee(employee);
+        var result = _employeeService.CreateEmployee(employeeDto);
         if (result.IsSuccess)
         {
             var createdEmployeeId = result.Value;
@@ -31,7 +31,7 @@ public class EmployeeOperations
         }
         else
         {
-            result.Errors.ForEach(Console.WriteLine);
+            result.Errors.ForEach(error => Console.WriteLine(error.Message));
         }
 
         Console.WriteLine();
@@ -39,21 +39,21 @@ public class EmployeeOperations
 
     public void UpdateEmployee()
     {
-        var employeeToUpdate = new EmployeeDto()
+        var employeeDto = new EmployeeDto()
         {
             EmployeeId = 1,
             FirstName = "Mohammad",
             LastName = "Sabri"
         };
 
-        var result = _employeeService.UpdateEmployee(employeeToUpdate);
+        var result = _employeeService.UpdateEmployee(employeeDto);
         if (result.IsSuccess)
         {
-            Console.WriteLine($"Updated Employee: {Environment.NewLine} {result.Value}");
+            Console.WriteLine($"Updated Employee: {Environment.NewLine}{result.Value}");
         }
         else
         {
-            result.Errors.ForEach(Console.WriteLine);
+            result.Errors.ForEach(error => Console.WriteLine(error.Message));
         }
 
         Console.WriteLine();
@@ -70,7 +70,7 @@ public class EmployeeOperations
         }
         else
         {
-            result.Errors.ForEach(Console.WriteLine);
+            result.Errors.ForEach(error => Console.WriteLine(error.Message));
         }
 
         Console.WriteLine();

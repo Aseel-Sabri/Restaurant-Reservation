@@ -12,32 +12,10 @@ public class CustomerOperations
         _customerService = customerService;
     }
 
-    public void UpdateCustomer()
-    {
-        var customerToUpdate = new CustomerDto()
-        {
-            CustomerId = 5,
-            FirstName = "Leen",
-            LastName = "Sabri",
-            Email = "leen.sabri@example.com"
-        };
-
-        var result = _customerService.UpdateCustomer(customerToUpdate);
-        if (result.IsSuccess)
-        {
-            Console.WriteLine($"Updated Customer: {Environment.NewLine} {result.Value}");
-        }
-        else
-        {
-            result.Errors.ForEach(Console.WriteLine);
-        }
-
-        Console.WriteLine();
-    }
 
     public void CreateCustomer()
     {
-        var customer = new CustomerDto()
+        var customerDto = new CustomerDto()
         {
             FirstName = "Aseel",
             LastName = "Sabri",
@@ -46,7 +24,7 @@ public class CustomerOperations
         };
 
 
-        var result = _customerService.CreateCustomer(customer);
+        var result = _customerService.CreateCustomer(customerDto);
         if (result.IsSuccess)
         {
             var createdCustomerId = result.Value;
@@ -54,7 +32,30 @@ public class CustomerOperations
         }
         else
         {
-            result.Errors.ForEach(Console.WriteLine);
+            result.Errors.ForEach(error => Console.WriteLine(error.Message));
+        }
+
+        Console.WriteLine();
+    }
+
+    public void UpdateCustomer()
+    {
+        var customerDto = new CustomerDto()
+        {
+            CustomerId = 5,
+            FirstName = "Leen",
+            LastName = "Sabri",
+            Email = "leen.sabri@example.com"
+        };
+
+        var result = _customerService.UpdateCustomer(customerDto);
+        if (result.IsSuccess)
+        {
+            Console.WriteLine($"Updated Customer: {Environment.NewLine}{result.Value}");
+        }
+        else
+        {
+            result.Errors.ForEach(error => Console.WriteLine(error.Message));
         }
 
         Console.WriteLine();
@@ -70,7 +71,7 @@ public class CustomerOperations
         }
         else
         {
-            result.Errors.ForEach(Console.WriteLine);
+            result.Errors.ForEach(error => Console.WriteLine(error.Message));
         }
 
         Console.WriteLine();

@@ -18,7 +18,7 @@ public class CustomerService : ICustomerService
     {
         if (customerDto.HasAnyNullOrEmptyFields())
         {
-            return Result.Fail($"All Customer Fields Must Be provided");
+            return Result.Fail($"All Customer Fields Must Be Provided");
         }
 
         var customer = new Customer()
@@ -36,8 +36,9 @@ public class CustomerService : ICustomerService
     {
         var customer = _customerRepository.FindCustomerById(customerDto.CustomerId);
         if (customer is null)
-            Result.Fail($"No Customer with ID {customerDto.CustomerId} Exists");
+            return Result.Fail($"No Customer with ID {customerDto.CustomerId} Exists");
 
+        // TODO: Check for empty strings
         customer.FirstName = customerDto.FirstName ?? customer.FirstName;
         customer.LastName = customerDto.LastName ?? customer.LastName;
         customer.Email = customerDto.Email ?? customer.Email;
@@ -50,7 +51,7 @@ public class CustomerService : ICustomerService
     public Result DeleteCustomer(int customerId)
     {
         if (!_customerRepository.HasCustomerById(customerId))
-            throw new InvalidOperationException($"No Customer With ID {customerId} Exists");
+            return Result.Fail($"No Customer With ID {customerId} Exists");
 
         try
         {
