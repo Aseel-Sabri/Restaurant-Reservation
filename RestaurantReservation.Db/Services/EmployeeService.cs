@@ -8,24 +8,28 @@ namespace RestaurantReservation.Db.Services;
 public class EmployeeService : IEmployeeService
 {
     private readonly IEmployeeRepository _employeeRepository;
+    private readonly IRestaurantRepository _restaurantRepository;
 
-    public EmployeeService(IEmployeeRepository employeeRepository)
+    public EmployeeService(IEmployeeRepository employeeRepository, IRestaurantRepository restaurantRepository)
     {
         _employeeRepository = employeeRepository;
+        _restaurantRepository = restaurantRepository;
     }
 
     public Result<int> CreateEmployee(EmployeeDto employeeDto)
     {
         if (employeeDto.HasAnyNullOrEmptyFields())
-        {
             return Result.Fail($"All Employee Fields Must Be Provided");
-        }
+
+        if (!_restaurantRepository.HasRestaurantById((int)employeeDto.RestaurantId!))
+            return Result.Fail($"No Restaurant with ID {employeeDto.RestaurantId} Exists");
+
 
         var employee = new Employee()
         {
-            FirstName = employeeDto.FirstName,
-            LastName = employeeDto.LastName,
-            Position = employeeDto.Position,
+            FirstName = employeeDto.FirstName!,
+            LastName = employeeDto.LastName!,
+            Position = employeeDto.Position!,
             RestaurantId = (int)employeeDto.RestaurantId
         };
         var employeeId = _employeeRepository.CreateEmployee(employee);
@@ -38,10 +42,19 @@ public class EmployeeService : IEmployeeService
         if (employee is null)
             return Result.Fail($"No Employee with ID {employeeDto.EmployeeId} Exists");
 
+        // TODO: Check for empty strings
         employee.FirstName = employeeDto.FirstName ?? employee.FirstName;
         employee.LastName = employeeDto.LastName ?? employee.LastName;
         employee.Position = employeeDto.Position ?? employee.Position;
-        employee.RestaurantId = employeeDto.RestaurantId ?? employee.RestaurantId;
+
+        if (employeeDto.RestaurantId is not null)
+        {
+            if (!_restaurantRepository.HasRestaurantById((int)employeeDto.RestaurantId!))
+                return Result.Fail($"No Restaurant with ID {employeeDto.RestaurantId} Exists");
+
+            employee.RestaurantId = (int)employeeDto.RestaurantId;
+        }
+
 
         var updatedEmployee = _employeeRepository.UpdateEmployee(employee);
         return Result.Ok(MapToEmployeeDto(updatedEmployee));
