@@ -9,4 +9,5 @@ public interface IReservationRepository
     bool DeleteReservation(int reservationId);
     Reservation? FindReservationById(int reservationId);
     bool HasReservationById(int reservationId);
+    List<Reservation> GetReservationsByCustomer(int customerId);
 }

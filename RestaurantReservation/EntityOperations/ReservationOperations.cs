@@ -58,7 +58,7 @@ public class ReservationOperations
 
         Console.WriteLine();
     }
-    
+
     public void DeleteReservation(int reservationId)
     {
         var result = _reservationService.DeleteReservation(reservationId);
@@ -74,6 +74,29 @@ public class ReservationOperations
 
         Console.WriteLine();
     }
-    
-    
+
+    public void GetReservationsByCustomer(int customerId)
+    {
+        var result = _reservationService.GetReservationsByCustomer(customerId);
+        if (result.IsFailed)
+        {
+            result.Errors.ForEach(error => Console.WriteLine(error.Message));
+            Console.WriteLine();
+            return;
+        }
+
+        var reservations = result.Value;
+
+        if (!reservations.Any())
+        {
+            Console.WriteLine($"No Reservations Were Made By Customer With ID {customerId}");
+            return;
+        }
+
+        reservations.ForEach(reservation =>
+        {
+            Console.WriteLine(reservation);
+            Console.WriteLine();
+        });
+    }
 }

@@ -33,6 +33,11 @@ public class ReservationRepository : IReservationRepository
         return _dbContext.SaveChanges() > 0;
     }
 
+    public List<Reservation> GetReservationsByCustomer(int customerId)
+    {
+        return _dbContext.Reservations.Where(reservation => reservation.CustomerId == customerId).ToList();
+    }
+
     public Reservation? FindReservationById(int reservationId)
     {
         return _dbContext.Reservations.Find(reservationId);

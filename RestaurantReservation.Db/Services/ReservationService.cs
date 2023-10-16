@@ -107,6 +107,16 @@ public class ReservationService : IReservationService
         }
     }
 
+    public Result<List<ReservationDto>> GetReservationsByCustomer(int customerId)
+    {
+        if (!_customerRepository.HasCustomerById(customerId))
+            return Result.Fail($"No Customer With ID {customerId} Exists");
+
+        return _reservationRepository.GetReservationsByCustomer(customerId)
+            .Select(MapToReservationDto)
+            .ToList();
+    }
+
     private ReservationDto MapToReservationDto(Reservation reservation)
     {
         return new ReservationDto()
