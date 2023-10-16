@@ -15,4 +15,5 @@ public interface IOrderRepository
     OrderItem? FindOrderItemById(int orderItemId);
     bool HasOrderItemById(int orderItemId);
     List<OrderItem> GetOrderItemsOfMenuItem(int menuItemId);
+    List<OrdersAndMenuItemsDto> ListOrdersAndMenuItems(int reservationId);
 }

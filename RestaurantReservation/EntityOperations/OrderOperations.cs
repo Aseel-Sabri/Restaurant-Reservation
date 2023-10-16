@@ -72,6 +72,41 @@ public class OrderOperations
         Console.WriteLine();
     }
 
+    public void ListOrdersAndMenuItems(int reservationId)
+    {
+        var result = _orderService.ListOrdersAndMenuItems(reservationId);
+        if (result.IsFailed)
+        {
+            result.Errors.ForEach(error => Console.WriteLine(error.Message));
+            return;
+        }
+
+        var orders = result.Value;
+
+        orders.ForEach(order =>
+        {
+            Console.WriteLine(
+                $"""
+                 OrderId: {order.OrderId}
+                 OrderDate: {order.OrderDate}
+                 EmployeeId: {order.EmployeeId}
+                 TotalAmount: {order.TotalAmount}
+                 MenuItems:
+                 """
+            );
+
+            order.MenuItems.ForEach(item => Console.WriteLine(
+                $"""
+                     ItemId: {item.ItemId}
+                     Name: {item.Name}
+                     Description: {item.Description}
+                     RestaurantId: {item.RestaurantId}
+                     
+                 """
+            ));
+        });
+    }
+
     public void CreateOrderItem()
     {
         var orderItemDto = new OrderItemDto()

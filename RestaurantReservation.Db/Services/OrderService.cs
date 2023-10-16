@@ -89,6 +89,14 @@ public class OrderService : IOrderService
         }
     }
 
+    public Result<List<OrdersAndMenuItemsDto>> ListOrdersAndMenuItems(int reservationId)
+    {
+        if (!_reservationRepository.HasReservationById(reservationId))
+            return Result.Fail($"No Reservation With ID {reservationId} Exists");
+
+        return _orderRepository.ListOrdersAndMenuItems(reservationId);
+    }
+
     public Result<int> CreateOrderItem(OrderItemDto orderItemDto)
     {
         var menuItem = _menuItemRepository.FindItemById(orderItemDto.MenuItemId);

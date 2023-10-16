@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RestaurantReservation.Db.DTOs;
 using RestaurantReservation.Db.Models;
 
 namespace RestaurantReservation.Db.Repositories;
@@ -31,6 +32,35 @@ public class OrderRepository : IOrderRepository
         var order = _dbContext.Orders.Find(orderId);
         _dbContext.Orders.Remove(order);
         return _dbContext.SaveChanges() > 0;
+    }
+
+    public List<OrdersAndMenuItemsDto> ListOrdersAndMenuItems(int reservationId)
+    {
+        // TODO
+        var orderDtos = _dbContext.Orders
+            .Where(order => order.ReservationId == reservationId)
+            .Select(order =>
+                new OrdersAndMenuItemsDto()
+                {
+                    EmployeeId = order.EmployeeId,
+                    OrderDate = order.OrderDate,
+                    OrderId = order.OrderId,
+                    TotalAmount = order.TotalAmount,
+                }).ToList();
+
+        orderDtos.ForEach(orderDto =>
+            orderDto.MenuItems = _dbContext.OrderItems
+                .Where(orderitem => orderitem.OrderId == orderDto.OrderId)
+                .Select(orderItem =>
+                    new MenuItemDto()
+                    {
+                        ItemId = orderItem.Item.ItemId,
+                        Description = orderItem.Item.Description,
+                        Name = orderItem.Item.Name,
+                        Price = orderItem.Item.Price,
+                        RestaurantId = orderItem.Item.RestaurantId
+                    }).ToList());
+        return orderDtos;
     }
 
     public Order? FindOrderById(int orderId)

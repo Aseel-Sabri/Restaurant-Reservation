@@ -11,4 +11,5 @@ public interface IOrderService
     Result<int> CreateOrderItem(OrderItemDto orderItemDto);
     Result<OrderItemDto> UpdateOrderItemQuantity(int orderItemId, int quantity);
     Result DeleteOrderItem(int orderItemId);
+    Result<List<OrdersAndMenuItemsDto>> ListOrdersAndMenuItems(int reservationId);
 }
