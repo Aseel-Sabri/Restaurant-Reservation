@@ -9,4 +9,5 @@ public interface IEmployeeService
     Result<EmployeeDto> UpdateEmployee(EmployeeDto employeeDto);
     Result DeleteEmployee(int employeeId);
     List<EmployeeDto> GetManagers();
+    Result<double> CalculateAverageOrderAmount(int employeeId);
 }

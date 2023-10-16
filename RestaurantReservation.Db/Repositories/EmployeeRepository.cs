@@ -39,6 +39,13 @@ public class EmployeeRepository : IEmployeeRepository
         return _dbContext.Employees.Where(employee => employee.Position == position).ToList();
     }
 
+    public double CalculateAverageOrderAmount(int employeeId)
+    {
+        return _dbContext.Orders
+            .Where(order => order.EmployeeId == employeeId)
+            .Average(order => order.TotalAmount);
+    }
+
     public Employee? FindEmployeeById(int employeeId)
     {
         return _dbContext.Employees.Find(employeeId);

@@ -82,6 +82,14 @@ public class EmployeeService : IEmployeeService
         return _employeeRepository.GetManagers().Select(MapToEmployeeDto).ToList();
     }
 
+    public Result<double> CalculateAverageOrderAmount(int employeeId)
+    {
+        if (!_employeeRepository.HasEmployeeById(employeeId))
+            return Result.Fail($"No Employee With ID {employeeId} Exists");
+
+        return _employeeRepository.CalculateAverageOrderAmount(employeeId);
+    }
+
     private EmployeeDto MapToEmployeeDto(Employee employee)
     {
         return new EmployeeDto()

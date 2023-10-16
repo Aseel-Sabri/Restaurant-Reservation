@@ -10,4 +10,5 @@ public interface IEmployeeRepository
     Employee? FindEmployeeById(int employeeId);
     bool HasEmployeeById(int employeeId);
     List<Employee> GetManagers();
+    double CalculateAverageOrderAmount(int employeeId);
 }

@@ -84,4 +84,19 @@ public class EmployeeOperations
             Console.WriteLine();
         });
     }
+
+    public void CalculateAverageOrderAmount(int employeeId)
+    {
+        var result = _employeeService.CalculateAverageOrderAmount(employeeId);
+
+        if (result.IsFailed)
+        {
+            result.Errors.ForEach(error => Console.WriteLine(error.Message));
+            Console.WriteLine();
+            return;
+        }
+
+        Console.WriteLine(result.Value);
+        Console.WriteLine();
+    }
 }
