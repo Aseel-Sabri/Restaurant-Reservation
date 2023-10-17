@@ -33,6 +33,13 @@ public class RestaurantRepository : IRestaurantRepository
         return _dbContext.SaveChanges() > 0;
     }
 
+    public double CalculateRestaurantTotalRevenue(int restaurantId)
+    {
+        return (double)_dbContext.Restaurants
+            .Select(_ => _dbContext.RestaurantTotalRevenue(restaurantId))
+            .FirstOrDefault();
+    }
+
     public Restaurant? FindRestaurantById(int restaurantId)
     {
         return _dbContext.Restaurants.Find(restaurantId);

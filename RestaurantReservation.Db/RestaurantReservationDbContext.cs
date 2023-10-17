@@ -24,6 +24,11 @@ public class RestaurantReservationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.HasDbFunction(typeof(RestaurantReservationDbContext)
+                .GetMethod(nameof(RestaurantTotalRevenue),
+                    new[] { typeof(int) }))
+            .HasName("fn_RestaurantTotalRevenue");
+
         modelBuilder.Entity<ReservationDetails>()
             .HasNoKey()
             .ToView("vw_ReservationDetails");
@@ -63,4 +68,7 @@ public class RestaurantReservationDbContext : DbContext
 
         DataSeeder.SeedData(modelBuilder);
     }
+
+    public decimal RestaurantTotalRevenue(int restaurantId)
+        => throw new NotSupportedException();
 }

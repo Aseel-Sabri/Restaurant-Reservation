@@ -8,4 +8,5 @@ public interface IRestaurantService
     Result<int> CreateRestaurant(RestaurantDto restaurantDto);
     Result<RestaurantDto> UpdateRestaurant(RestaurantDto restaurantDto);
     Result DeleteRestaurant(int restaurantId);
+    Result<double> CalculateRestaurantTotalRevenue(int restaurantId);
 }

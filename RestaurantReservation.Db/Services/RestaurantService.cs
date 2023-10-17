@@ -66,6 +66,14 @@ public class RestaurantService : IRestaurantService
         }
     }
 
+    public Result<double> CalculateRestaurantTotalRevenue(int restaurantId)
+    {
+        if (!_restaurantRepository.HasRestaurantById(restaurantId))
+            return Result.Fail($"No Restaurant With ID {restaurantId} Exists");
+
+        return _restaurantRepository.CalculateRestaurantTotalRevenue(restaurantId);
+    }
+
     private RestaurantDto MapToRestaurantDto(Restaurant restaurant)
     {
         return new RestaurantDto()

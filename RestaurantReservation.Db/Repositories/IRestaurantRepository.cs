@@ -9,4 +9,5 @@ public interface IRestaurantRepository
     bool DeleteRestaurant(int restaurantId);
     Restaurant? FindRestaurantById(int restaurantId);
     bool HasRestaurantById(int restaurantId);
+    double CalculateRestaurantTotalRevenue(int restaurantId);
 }

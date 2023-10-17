@@ -72,4 +72,19 @@ public class RestaurantOperations
 
         Console.WriteLine();
     }
+
+    public void CalculateRestaurantTotalRevenue(int restaurantId)
+    {
+        var result = _restaurantService.CalculateRestaurantTotalRevenue(restaurantId);
+        if (result.IsFailed)
+        {
+            result.Errors.ForEach(error => Console.WriteLine(error.Message));
+            Console.WriteLine();
+            return;
+        }
+
+
+        Console.WriteLine($"Revenue Of Restaurant With ID {restaurantId} = {result.Value}");
+        Console.WriteLine();
+    }
 }
