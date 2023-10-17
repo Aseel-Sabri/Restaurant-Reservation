@@ -2,9 +2,9 @@
 using RestaurantReservation.Db.KeylessEntities;
 using RestaurantReservation.Db.Models;
 
-namespace RestaurantReservation.Db;
+namespace RestaurantReservation.Db.DbContext;
 
-public class RestaurantReservationDbContext : DbContext
+public class RestaurantReservationDbContext : Microsoft.EntityFrameworkCore.DbContext
 {
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Employee> Employees { get; set; }

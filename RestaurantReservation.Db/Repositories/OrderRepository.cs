@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RestaurantReservation.Db.DbContext;
 using RestaurantReservation.Db.DTOs;
 using RestaurantReservation.Db.Models;
 
@@ -92,7 +93,7 @@ public class OrderRepository : IOrderRepository
         return _dbContext.SaveChanges() > 0;
     }
 
-    public List<OrderItem> GetOrderItemsOfMenuItem(int menuItemId)
+    public List<OrderItem> FindOrderItemsByMenuItem(int menuItemId)
     {
         return _dbContext.OrderItems.Where(orderItem => orderItem.MenuItemId == menuItemId).ToList();
     }

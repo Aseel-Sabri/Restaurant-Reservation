@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using RestaurantReservation.Db;
+using RestaurantReservation.Db.DbContext;
 using RestaurantReservation.Db.Repositories;
 using RestaurantReservation.Db.Services;
 using RestaurantReservation.EntityOperations;
@@ -14,36 +14,16 @@ public class AppConfig
 
     public static void ConfigureServices()
     {
-        var connectionString = GetConnectionString();
+        var serviceCollection = new ServiceCollection();
+        ConfigureDbContext(serviceCollection);
+        ConfigureEntitiesRepositories(serviceCollection);
+        ConfigureEntitiesServices(serviceCollection);
+        ConfigureEntitiesOperations(serviceCollection);
 
-        _serviceProvider = new ServiceCollection()
-            .AddDbContext<RestaurantReservationDbContext>(options =>
-                options.UseSqlServer(connectionString))
-            .AddSingleton<ICustomerRepository, CustomerRepository>()
-            .AddSingleton<ICustomerService, CustomerService>()
-            .AddSingleton<CustomerOperations>()
-            .AddSingleton<IRestaurantRepository, RestaurantRepository>()
-            .AddSingleton<IRestaurantService, RestaurantService>()
-            .AddSingleton<RestaurantOperations>()
-            .AddSingleton<IEmployeeRepository, EmployeeRepository>()
-            .AddSingleton<IEmployeeService, EmployeeService>()
-            .AddSingleton<EmployeeOperations>()
-            .AddSingleton<ITableRepository, TableRepository>()
-            .AddSingleton<ITableService, TableService>()
-            .AddSingleton<TableOperations>()
-            .AddSingleton<IReservationRepository, ReservationRepository>()
-            .AddSingleton<IReservationService, ReservationService>()
-            .AddSingleton<ReservationOperations>()
-            .AddSingleton<IOrderRepository, OrderRepository>()
-            .AddSingleton<IMenuItemRepository, MenuItemRepository>()
-            .AddSingleton<IOrderService, OrderService>()
-            .AddSingleton<IMenuItemService, MenuItemService>()
-            .AddSingleton<OrderOperations>()
-            .AddSingleton<MenuItemOperations>()
-            .BuildServiceProvider();
+        _serviceProvider = serviceCollection.BuildServiceProvider();
     }
 
-    public static T GetService<T>()
+    public static T? GetService<T>()
     {
         return _serviceProvider.GetService<T>();
     }
@@ -57,5 +37,49 @@ public class AppConfig
 
         var connectionString = configuration.GetConnectionString("Default");
         return connectionString;
+    }
+
+    private static void ConfigureDbContext(IServiceCollection serviceCollection)
+    {
+        var connectionString = GetConnectionString();
+
+        serviceCollection.AddDbContext<RestaurantReservationDbContext>(options =>
+            options.UseSqlServer(connectionString));
+    }
+
+    private static void ConfigureEntitiesRepositories(IServiceCollection serviceCollection)
+    {
+        serviceCollection
+            .AddSingleton<ICustomerRepository, CustomerRepository>()
+            .AddSingleton<IRestaurantRepository, RestaurantRepository>()
+            .AddSingleton<IEmployeeRepository, EmployeeRepository>()
+            .AddSingleton<ITableRepository, TableRepository>()
+            .AddSingleton<IReservationRepository, ReservationRepository>()
+            .AddSingleton<IOrderRepository, OrderRepository>()
+            .AddSingleton<IMenuItemRepository, MenuItemRepository>();
+    }
+
+    private static void ConfigureEntitiesServices(IServiceCollection serviceCollection)
+    {
+        serviceCollection
+            .AddSingleton<ICustomerService, CustomerService>()
+            .AddSingleton<IRestaurantService, RestaurantService>()
+            .AddSingleton<IEmployeeService, EmployeeService>()
+            .AddSingleton<ITableService, TableService>()
+            .AddSingleton<IReservationService, ReservationService>()
+            .AddSingleton<IOrderService, OrderService>()
+            .AddSingleton<IMenuItemService, MenuItemService>();
+    }
+
+    private static void ConfigureEntitiesOperations(IServiceCollection serviceCollection)
+    {
+        serviceCollection
+            .AddSingleton<CustomerOperations>()
+            .AddSingleton<RestaurantOperations>()
+            .AddSingleton<EmployeeOperations>()
+            .AddSingleton<TableOperations>()
+            .AddSingleton<ReservationOperations>()
+            .AddSingleton<OrderOperations>()
+            .AddSingleton<MenuItemOperations>();
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RestaurantReservation.Db.Models;
 
-namespace RestaurantReservation.Db;
+namespace RestaurantReservation.Db.DbContext;
 
 public static class DataSeeder
 {

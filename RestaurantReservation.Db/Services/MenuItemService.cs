@@ -59,7 +59,7 @@ public class MenuItemService : IMenuItemService
         using var scope = new TransactionScope();
         if (menuItemDto.Price is not null)
         {
-            var orderItems = _orderRepository.GetOrderItemsOfMenuItem(menuItem.ItemId);
+            var orderItems = _orderRepository.FindOrderItemsByMenuItem(menuItem.ItemId);
             orderItems.ForEach(orderItem =>
             {
                 orderItem.Order = _orderRepository.FindOrderById(orderItem.OrderId)!;

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RestaurantReservation.Db.DbContext;
 using RestaurantReservation.Db.Models;
 
 namespace RestaurantReservation.Db.Repositories;
