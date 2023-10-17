@@ -9,4 +9,5 @@ public interface ICustomerRepository
     bool DeleteCustomer(int customerId);
     Customer? FindCustomerById(int customerId);
     bool HasCustomerById(int customerId);
+    List<Customer> FindCustomersWithPartySizeGreaterThan(int partySize);
 }

@@ -65,6 +65,13 @@ public class CustomerService : ICustomerService
         }
     }
 
+    public List<CustomerDto> FindCustomersWithPartySizeGreaterThan(int partySize)
+    {
+        return _customerRepository.FindCustomersWithPartySizeGreaterThan(partySize)
+            .Select(MapToCustomerDto)
+            .ToList();
+    }
+
     private CustomerDto MapToCustomerDto(Customer customer)
     {
         return new CustomerDto()

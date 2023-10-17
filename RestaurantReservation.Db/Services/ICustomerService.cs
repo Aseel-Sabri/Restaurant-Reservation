@@ -8,4 +8,5 @@ public interface ICustomerService
     Result<int> CreateCustomer(CustomerDto customerDto);
     Result<CustomerDto> UpdateCustomer(CustomerDto customerDto);
     Result DeleteCustomer(int customerId);
+    List<CustomerDto> FindCustomersWithPartySizeGreaterThan(int partySize);
 }

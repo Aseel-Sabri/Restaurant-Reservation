@@ -76,4 +76,21 @@ public class CustomerOperations
 
         Console.WriteLine();
     }
+
+    public void FindCustomersWithPartySizeGreaterThan(int partySize)
+    {
+        var customerDtos = _customerService.FindCustomersWithPartySizeGreaterThan(partySize);
+        if (!customerDtos.Any())
+        {
+            Console.WriteLine("No Customers Were Found");
+            Console.WriteLine();
+            return;
+        }
+
+        customerDtos.ForEach(customer =>
+        {
+            Console.WriteLine(customer);
+            Console.WriteLine();
+        });
+    }
 }

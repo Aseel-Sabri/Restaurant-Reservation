@@ -39,6 +39,13 @@ public class CustomerRepository : ICustomerRepository
         return _dbContext.Customers.Find(customerId);
     }
 
+    public List<Customer> FindCustomersWithPartySizeGreaterThan(int partySize)
+    {
+        var customers =
+            _dbContext.Customers.FromSqlInterpolated($"EXEC sp_FindCustomersWithPartySizeGreaterThan {partySize}");
+        return customers.ToList();
+    }
+
     public bool HasCustomerById(int customerId)
     {
         return FindCustomerById(customerId) is not null;
