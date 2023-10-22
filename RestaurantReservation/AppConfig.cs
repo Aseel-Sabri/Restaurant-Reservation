@@ -28,7 +28,7 @@ public class AppConfig
         return _serviceProvider.GetService<T>();
     }
 
-    private static string? GetConnectionString()
+    public static string? GetConnectionString()
     {
         var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())

@@ -1,17 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using RestaurantReservation.Db.DbContext;
 
-namespace RestaurantReservation.Db.DbContext;
+namespace RestaurantReservation;
 
 public class RestaurantReservationDbContextFactory : IDesignTimeDbContextFactory<RestaurantReservationDbContext>
 {
     public RestaurantReservationDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<RestaurantReservationDbContext>();
-        // TODO
-        optionsBuilder.UseSqlServer(
-            "Server=localhost;Database=RestaurantReservationCore;Integrated Security=True;Encrypt=False"
-        );
+        optionsBuilder.UseSqlServer(AppConfig.GetConnectionString());
         return new RestaurantReservationDbContext(optionsBuilder.Options);
     }
 }
