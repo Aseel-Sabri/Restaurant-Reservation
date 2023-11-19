@@ -17,12 +17,12 @@ public class EmployeeService : IEmployeeService
         _restaurantRepository = restaurantRepository;
     }
 
-    public Result<int> CreateEmployee(EmployeeDto employeeDto)
+    public async Task<Result<int>> CreateEmployee(EmployeeDto employeeDto)
     {
         if (employeeDto.HasAnyNullOrEmptyFields())
             return Result.Fail($"All Employee Fields Must Be Provided");
 
-        if (!_restaurantRepository.HasRestaurantById((int)employeeDto.RestaurantId!))
+        if (!await _restaurantRepository.HasRestaurantById((int)employeeDto.RestaurantId!))
             return Result.Fail($"No Restaurant with ID {employeeDto.RestaurantId} Exists");
 
 
@@ -33,13 +33,13 @@ public class EmployeeService : IEmployeeService
             Position = employeeDto.Position!,
             RestaurantId = (int)employeeDto.RestaurantId
         };
-        var employeeId = _employeeRepository.CreateEmployee(employee);
+        var employeeId = await _employeeRepository.CreateEmployee(employee);
         return Result.Ok(employeeId);
     }
 
-    public Result<EmployeeDto> UpdateEmployee(EmployeeDto employeeDto)
+    public async Task<Result<EmployeeDto>> UpdateEmployee(EmployeeDto employeeDto)
     {
-        var employee = _employeeRepository.FindEmployeeById(employeeDto.EmployeeId);
+        var employee = await _employeeRepository.FindEmployeeById(employeeDto.EmployeeId);
         if (employee is null)
             return Result.Fail($"No Employee with ID {employeeDto.EmployeeId} Exists");
 
@@ -50,25 +50,25 @@ public class EmployeeService : IEmployeeService
 
         if (employeeDto.RestaurantId is not null)
         {
-            if (!_restaurantRepository.HasRestaurantById((int)employeeDto.RestaurantId!))
+            if (!await _restaurantRepository.HasRestaurantById((int)employeeDto.RestaurantId!))
                 return Result.Fail($"No Restaurant with ID {employeeDto.RestaurantId} Exists");
 
             employee.RestaurantId = (int)employeeDto.RestaurantId;
         }
 
 
-        var updatedEmployee = _employeeRepository.UpdateEmployee(employee);
+        var updatedEmployee = await _employeeRepository.UpdateEmployee(employee);
         return Result.Ok(MapToEmployeeDto(updatedEmployee));
     }
 
-    public Result DeleteEmployee(int employeeId)
+    public async Task<Result> DeleteEmployee(int employeeId)
     {
-        if (!_employeeRepository.HasEmployeeById(employeeId))
+        if (!await _employeeRepository.HasEmployeeById(employeeId))
             return Result.Fail($"No Employee With ID {employeeId} Exists");
 
         try
         {
-            return Result.OkIf(_employeeRepository.DeleteEmployee(employeeId),
+            return Result.OkIf(await _employeeRepository.DeleteEmployee(employeeId),
                 $"Could Not Delete Employee With ID {employeeId}");
         }
         catch (Exception e)
@@ -78,22 +78,22 @@ public class EmployeeService : IEmployeeService
         }
     }
 
-    public List<EmployeeDto> GetManagers()
+    public async Task<List<EmployeeDto>> GetManagers()
     {
-        return _employeeRepository.GetManagers().Select(MapToEmployeeDto).ToList();
+        return (await _employeeRepository.GetManagers()).Select(MapToEmployeeDto).ToList();
     }
 
-    public List<EmployeeDetails> GetEmployeesDetails()
+    public async Task<List<EmployeeDetails>> GetEmployeesDetails()
     {
-        return _employeeRepository.GetEmployeesDetails();
+        return await _employeeRepository.GetEmployeesDetails();
     }
 
-    public Result<double> CalculateAverageOrderAmount(int employeeId)
+    public async Task<Result<double>> CalculateAverageOrderAmount(int employeeId)
     {
-        if (!_employeeRepository.HasEmployeeById(employeeId))
+        if (!await _employeeRepository.HasEmployeeById(employeeId))
             return Result.Fail($"No Employee With ID {employeeId} Exists");
 
-        return _employeeRepository.CalculateAverageOrderAmount(employeeId);
+        return await _employeeRepository.CalculateAverageOrderAmount(employeeId);
     }
 
     private EmployeeDto MapToEmployeeDto(Employee employee)

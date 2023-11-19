@@ -14,30 +14,31 @@ public class OrderRepository : IOrderRepository
         _dbContext = dbContext;
     }
 
-    public int CreateOrder(Order order)
+    public async Task<int> CreateOrder(Order order)
     {
-        _dbContext.Orders.Add(order);
-        _dbContext.SaveChanges();
+        await _dbContext.Orders.AddAsync(order);
+        await _dbContext.SaveChangesAsync();
         return order.OrderId;
     }
 
-    public Order UpdateOrder(Order order)
+    public async Task<Order> UpdateOrder(Order order)
     {
         _dbContext.Entry(order).State = EntityState.Modified;
-        _dbContext.SaveChanges();
-        return FindOrderById(order.OrderId);
+        await _dbContext.SaveChangesAsync();
+        return await FindOrderById(order.OrderId);
     }
 
-    public bool DeleteOrder(int orderId)
+    public async Task<bool> DeleteOrder(int orderId)
     {
-        var order = _dbContext.Orders.Find(orderId);
+        var order = await _dbContext.Orders.FindAsync(orderId);
         _dbContext.Orders.Remove(order);
-        return _dbContext.SaveChanges() > 0;
+        return await _dbContext.SaveChangesAsync() > 0;
     }
 
-    public List<OrdersAndMenuItemsDto> ListOrdersAndMenuItems(int reservationId)
+    // TODO
+    public async Task<List<OrdersAndMenuItemsDto>> ListOrdersAndMenuItems(int reservationId)
     {
-        return _dbContext.Orders
+        return await _dbContext.Orders
             .Where(order => order.ReservationId == reservationId)
             .Select(order =>
                 new OrdersAndMenuItemsDto()
@@ -47,64 +48,64 @@ public class OrderRepository : IOrderRepository
                     OrderId = order.OrderId,
                     TotalAmount = order.TotalAmount,
                     MenuItems = order.OrderItems.Select(orderItem =>
-                        new MenuItemDto()
-                        {
-                            ItemId = orderItem.Item.ItemId,
-                            Description = orderItem.Item.Description,
-                            Name = orderItem.Item.Name,
-                            Price = orderItem.Item.Price,
-                            RestaurantId = orderItem.Item.RestaurantId
-                        })
+                            new MenuItemDto()
+                            {
+                                ItemId = orderItem.Item.ItemId,
+                                Description = orderItem.Item.Description,
+                                Name = orderItem.Item.Name,
+                                Price = orderItem.Item.Price,
+                                RestaurantId = orderItem.Item.RestaurantId
+                            })
                         .Distinct()
                         .ToList()
                 })
             .AsSplitQuery()
-            .ToList();
+            .ToListAsync();
     }
 
-    public Order? FindOrderById(int orderId)
+    public async Task<Order?> FindOrderById(int orderId)
     {
-        return _dbContext.Orders.Find(orderId);
+        return await _dbContext.Orders.FindAsync(orderId);
     }
 
-    public bool HasOrderById(int orderId)
+    public async Task<bool> HasOrderById(int orderId)
     {
-        return FindOrderById(orderId) is not null;
+        return await FindOrderById(orderId) is not null;
     }
 
-    public int CreateOrderItem(OrderItem orderItem)
+    public async Task<int> CreateOrderItem(OrderItem orderItem)
     {
-        _dbContext.OrderItems.Add(orderItem);
-        _dbContext.SaveChanges();
+        await _dbContext.OrderItems.AddAsync(orderItem);
+        await _dbContext.SaveChangesAsync();
         return orderItem.OrderItemId;
     }
 
-    public OrderItem UpdateOrderItem(OrderItem orderItem)
+    public async Task<OrderItem> UpdateOrderItem(OrderItem orderItem)
     {
         _dbContext.Entry(orderItem).State = EntityState.Modified;
-        _dbContext.SaveChanges();
-        return FindOrderItemById(orderItem.OrderItemId);
+        await _dbContext.SaveChangesAsync();
+        return await FindOrderItemById(orderItem.OrderItemId);
     }
 
-    public bool DeleteOrderItem(int orderItemId)
+    public async Task<bool> DeleteOrderItem(int orderItemId)
     {
-        var orderItem = _dbContext.OrderItems.Find(orderItemId);
+        var orderItem = await _dbContext.OrderItems.FindAsync(orderItemId);
         _dbContext.OrderItems.Remove(orderItem);
-        return _dbContext.SaveChanges() > 0;
+        return await _dbContext.SaveChangesAsync() > 0;
     }
 
-    public List<OrderItem> FindOrderItemsByMenuItem(int menuItemId)
+    public async Task<List<OrderItem>> FindOrderItemsByMenuItem(int menuItemId)
     {
-        return _dbContext.OrderItems.Where(orderItem => orderItem.MenuItemId == menuItemId).ToList();
+        return await _dbContext.OrderItems.Where(orderItem => orderItem.MenuItemId == menuItemId).ToListAsync();
     }
 
-    public OrderItem? FindOrderItemById(int orderItemId)
+    public async Task<OrderItem?> FindOrderItemById(int orderItemId)
     {
-        return _dbContext.OrderItems.Find(orderItemId);
+        return await _dbContext.OrderItems.FindAsync(orderItemId);
     }
 
-    public bool HasOrderItemById(int orderItemId)
+    public async Task<bool> HasOrderItemById(int orderItemId)
     {
-        return FindOrderById(orderItemId) is not null;
+        return await FindOrderItemById(orderItemId) is not null;
     }
 }

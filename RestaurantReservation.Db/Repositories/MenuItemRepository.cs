@@ -13,28 +13,28 @@ public class MenuItemRepository : IMenuItemRepository
         _dbContext = dbContext;
     }
 
-    public int CreateItem(MenuItem item)
+    public async Task<int> CreateItem(MenuItem item)
     {
-        _dbContext.MenuItems.Add(item);
-        _dbContext.SaveChanges();
+        await _dbContext.MenuItems.AddAsync(item);
+        await _dbContext.SaveChangesAsync();
         return item.ItemId;
     }
 
-    public MenuItem UpdateItem(MenuItem item)
+    public async Task<MenuItem> UpdateItem(MenuItem item)
     {
         _dbContext.Entry(item).State = EntityState.Modified;
-        _dbContext.SaveChanges();
-        return FindItemById(item.ItemId);
+        await _dbContext.SaveChangesAsync();
+        return await FindItemById(item.ItemId);
     }
 
-    public bool DeleteItem(int itemId)
+    public async Task<bool> DeleteItem(int itemId)
     {
-        var item = _dbContext.MenuItems.Find(itemId);
+        var item = await _dbContext.MenuItems.FindAsync(itemId);
         _dbContext.MenuItems.Remove(item);
-        return _dbContext.SaveChanges() > 0;
+        return await _dbContext.SaveChangesAsync() > 0;
     }
 
-    public List<MenuItem> ListOrderedMenuItems(int reservationId)
+    public async Task<List<MenuItem>> ListOrderedMenuItems(int reservationId)
     {
         var menuItems = _dbContext.OrderItems
             .Where(orderItem => orderItem.Order.ReservationId == reservationId)
@@ -51,16 +51,16 @@ public class MenuItemRepository : IMenuItemRepository
             .Distinct();
 
 
-        return menuItems.ToList();
+        return await menuItems.ToListAsync();
     }
 
-    public MenuItem? FindItemById(int itemId)
+    public async Task<MenuItem?> FindItemById(int itemId)
     {
-        return _dbContext.MenuItems.Find(itemId);
+        return await _dbContext.MenuItems.FindAsync(itemId);
     }
 
-    public bool HasItemById(int itemId)
+    public async Task<bool> HasItemById(int itemId)
     {
-        return FindItemById(itemId) is not null;
+        return await FindItemById(itemId) is not null;
     }
 }

@@ -4,9 +4,9 @@ namespace RestaurantReservation.Db.Repositories;
 
 public interface ITableRepository
 {
-    int CreateTable(Table table);
-    Table UpdateTable(Table table);
-    bool DeleteTable(int tableId);
-    Table? FindTableById(int tableId);
-    bool HasTableById(int tableId);
+    Task<int> CreateTable(Table table);
+    Task<Table> UpdateTable(Table table);
+    Task<bool> DeleteTable(int tableId);
+    Task<Table?> FindTableById(int tableId);
+    Task<bool> HasTableById(int tableId);
 }

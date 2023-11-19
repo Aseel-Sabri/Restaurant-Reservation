@@ -12,7 +12,7 @@ public class MenuItemOperations
         _menuItemService = menuItemService;
     }
 
-    public void CreateItem()
+    public async Task CreateItem()
     {
         var itemDto = new MenuItemDto()
         {
@@ -22,7 +22,7 @@ public class MenuItemOperations
             Price = 2.99
         };
 
-        var result = _menuItemService.CreateItem(itemDto);
+        var result = await _menuItemService.CreateItem(itemDto);
         if (result.IsSuccess)
         {
             var createdItemId = result.Value;
@@ -36,7 +36,7 @@ public class MenuItemOperations
         Console.WriteLine();
     }
 
-    public void UpdateItem()
+    public async Task UpdateItem()
     {
         var itemDto = new MenuItemDto()
         {
@@ -44,7 +44,7 @@ public class MenuItemOperations
             Price = 5
         };
 
-        var result = _menuItemService.UpdateItem(itemDto);
+        var result = await _menuItemService.UpdateItem(itemDto);
         if (result.IsSuccess)
         {
             Console.WriteLine($"Updated Menu Item: {Environment.NewLine}{result.Value}");
@@ -57,9 +57,9 @@ public class MenuItemOperations
         Console.WriteLine();
     }
 
-    public void DeleteItem(int itemId)
+    public async Task DeleteItem(int itemId)
     {
-        var result = _menuItemService.DeleteItem(itemId);
+        var result = await _menuItemService.DeleteItem(itemId);
 
         if (result.IsSuccess)
         {
@@ -73,9 +73,9 @@ public class MenuItemOperations
         Console.WriteLine();
     }
 
-    public void ListOrderedMenuItems(int reservationId)
+    public async Task ListOrderedMenuItems(int reservationId)
     {
-        var result = _menuItemService.ListOrderedMenuItems(reservationId);
+        var result = await _menuItemService.ListOrderedMenuItems(reservationId);
 
         if (result.IsFailed)
         {

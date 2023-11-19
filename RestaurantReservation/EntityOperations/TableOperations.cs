@@ -12,7 +12,7 @@ public class TableOperations
         _tableService = tableService;
     }
 
-    public void CreateTable()
+    public async Task CreateTable()
     {
         var tableDto = new TableDto()
         {
@@ -20,7 +20,7 @@ public class TableOperations
             RestaurantId = 1
         };
 
-        var result = _tableService.CreateTable(tableDto);
+        var result = await _tableService.CreateTable(tableDto);
         if (result.IsSuccess)
         {
             var createdTableId = result.Value;
@@ -34,9 +34,9 @@ public class TableOperations
         Console.WriteLine();
     }
 
-    public void UpdateTableCapacity()
+    public async Task UpdateTableCapacity()
     {
-        var result = _tableService.UpdateTableCapacity(1, 6);
+        var result = await _tableService.UpdateTableCapacity(1, 6);
         if (result.IsSuccess)
         {
             Console.WriteLine($"Updated Table: {Environment.NewLine}{result.Value}");
@@ -49,9 +49,9 @@ public class TableOperations
         Console.WriteLine();
     }
 
-    public void DeleteTable(int restaurantId)
+    public async Task DeleteTable(int restaurantId)
     {
-        var result = _tableService.DeleteTable(restaurantId);
+        var result = await _tableService.DeleteTable(restaurantId);
 
         if (result.IsSuccess)
         {

@@ -12,7 +12,7 @@ public class ReservationOperations
         _reservationService = reservationService;
     }
 
-    public void CreateReservation()
+    public async Task CreateReservation()
     {
         var reservationDto = new ReservationDto()
         {
@@ -24,7 +24,7 @@ public class ReservationOperations
         };
 
 
-        var result = _reservationService.CreateReservation(reservationDto);
+        var result = await _reservationService.CreateReservation(reservationDto);
         if (result.IsSuccess)
         {
             var createdReservationId = result.Value;
@@ -38,7 +38,7 @@ public class ReservationOperations
         Console.WriteLine();
     }
 
-    public void UpdateReservation()
+    public async Task UpdateReservation()
     {
         var reservationDto = new ReservationDto()
         {
@@ -46,7 +46,7 @@ public class ReservationOperations
             CustomerId = 3
         };
 
-        var result = _reservationService.UpdateReservation(reservationDto);
+        var result = await _reservationService.UpdateReservation(reservationDto);
         if (result.IsSuccess)
         {
             Console.WriteLine($"Updated Reservation: {Environment.NewLine}{result.Value}");
@@ -59,9 +59,9 @@ public class ReservationOperations
         Console.WriteLine();
     }
 
-    public void DeleteReservation(int reservationId)
+    public async Task DeleteReservation(int reservationId)
     {
-        var result = _reservationService.DeleteReservation(reservationId);
+        var result = await _reservationService.DeleteReservation(reservationId);
 
         if (result.IsSuccess)
         {
@@ -75,9 +75,9 @@ public class ReservationOperations
         Console.WriteLine();
     }
 
-    public void GetReservationsByCustomer(int customerId)
+    public async Task GetReservationsByCustomer(int customerId)
     {
-        var result = _reservationService.GetReservationsByCustomer(customerId);
+        var result = await _reservationService.GetReservationsByCustomer(customerId);
         if (result.IsFailed)
         {
             result.Errors.ForEach(error => Console.WriteLine(error.Message));
@@ -100,9 +100,9 @@ public class ReservationOperations
         });
     }
 
-    public void GetReservationsWithCustomerAndRestaurantDetails()
+    public async Task GetReservationsWithCustomerAndRestaurantDetails()
     {
-        var reservationDetailsList = _reservationService.GetReservationsWithCustomerAndRestaurantDetails();
+        var reservationDetailsList = await _reservationService.GetReservationsWithCustomerAndRestaurantDetails();
 
         if (!reservationDetailsList.Any())
         {

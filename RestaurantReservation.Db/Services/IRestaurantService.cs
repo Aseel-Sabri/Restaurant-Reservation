@@ -5,8 +5,8 @@ namespace RestaurantReservation.Db.Services;
 
 public interface IRestaurantService
 {
-    Result<int> CreateRestaurant(RestaurantDto restaurantDto);
-    Result<RestaurantDto> UpdateRestaurant(RestaurantDto restaurantDto);
-    Result DeleteRestaurant(int restaurantId);
-    Result<double> CalculateRestaurantTotalRevenue(int restaurantId);
+    Task<Result<int>> CreateRestaurant(RestaurantDto restaurantDto);
+    Task<Result<RestaurantDto>> UpdateRestaurant(RestaurantDto restaurantDto);
+    Task<Result> DeleteRestaurant(int restaurantId);
+    Task<Result<double>> CalculateRestaurantTotalRevenue(int restaurantId);
 }

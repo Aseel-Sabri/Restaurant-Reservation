@@ -14,52 +14,52 @@ public class EmployeeRepository : IEmployeeRepository
         _dbContext = dbContext;
     }
 
-    public int CreateEmployee(Employee employee)
+    public async Task<int> CreateEmployee(Employee employee)
     {
-        _dbContext.Employees.Add(employee);
-        _dbContext.SaveChanges();
+        await _dbContext.Employees.AddAsync(employee);
+        await _dbContext.SaveChangesAsync();
         return employee.EmployeeId;
     }
 
-    public Employee UpdateEmployee(Employee employee)
+    public async Task<Employee> UpdateEmployee(Employee employee)
     {
         _dbContext.Entry(employee).State = EntityState.Modified;
-        _dbContext.SaveChanges();
-        return FindEmployeeById(employee.EmployeeId);
+        await _dbContext.SaveChangesAsync();
+        return (await FindEmployeeById(employee.EmployeeId));
     }
 
-    public bool DeleteEmployee(int employeeId)
+    public async Task<bool> DeleteEmployee(int employeeId)
     {
-        var employee = FindEmployeeById(employeeId);
+        var employee = await FindEmployeeById(employeeId);
         _dbContext.Employees.Remove(employee);
-        return _dbContext.SaveChanges() > 0;
+        return await _dbContext.SaveChangesAsync() > 0;
     }
 
-    public List<Employee> GetManagers()
+    public async Task<List<Employee>> GetManagers()
     {
         var position = "Manager";
-        return _dbContext.Employees.Where(employee => employee.Position == position).ToList();
+        return await _dbContext.Employees.Where(employee => employee.Position == position).ToListAsync();
     }
 
-    public double CalculateAverageOrderAmount(int employeeId)
+    public async Task<double> CalculateAverageOrderAmount(int employeeId)
     {
-        return _dbContext.Orders
+        return await _dbContext.Orders
             .Where(order => order.EmployeeId == employeeId)
-            .Average(order => order.TotalAmount);
+            .AverageAsync(order => order.TotalAmount);
     }
 
-    public List<EmployeeDetails> GetEmployeesDetails()
+    public async Task<List<EmployeeDetails>> GetEmployeesDetails()
     {
-        return _dbContext.EmployeesDetails.ToList();
+        return await _dbContext.EmployeesDetails.ToListAsync();
     }
 
-    public Employee? FindEmployeeById(int employeeId)
+    public async Task<Employee?> FindEmployeeById(int employeeId)
     {
-        return _dbContext.Employees.Find(employeeId);
+        return await _dbContext.Employees.FindAsync(employeeId);
     }
 
-    public bool HasEmployeeById(int employeeId)
+    public async Task<bool> HasEmployeeById(int employeeId)
     {
-        return FindEmployeeById(employeeId) is not null;
+        return await FindEmployeeById(employeeId) is not null;
     }
 }

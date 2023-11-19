@@ -13,42 +13,42 @@ public class CustomerRepository : ICustomerRepository
         _dbContext = dbContext;
     }
 
-    public int CreateCustomer(Customer customer)
+    public async Task<int> CreateCustomer(Customer customer)
     {
-        _dbContext.Customers.Add(customer);
-        _dbContext.SaveChanges();
+        await _dbContext.Customers.AddAsync(customer);
+        await _dbContext.SaveChangesAsync();
         return customer.CustomerId;
     }
 
-    public Customer UpdateCustomer(Customer customer)
+    public async Task<Customer> UpdateCustomer(Customer customer)
     {
         _dbContext.Entry(customer).State = EntityState.Modified;
-        _dbContext.SaveChanges();
-        return FindCustomerById(customer.CustomerId);
+        await _dbContext.SaveChangesAsync();
+        return await FindCustomerById(customer.CustomerId);
     }
 
-    public bool DeleteCustomer(int customerId)
+    public async Task<bool> DeleteCustomer(int customerId)
     {
-        var customer = FindCustomerById(customerId);
+        var customer = await FindCustomerById(customerId);
         _dbContext.Customers.Remove(customer);
 
-        return _dbContext.SaveChanges() > 0;
+        return await _dbContext.SaveChangesAsync() > 0;
     }
 
-    public Customer? FindCustomerById(int customerId)
+    public async Task<Customer?> FindCustomerById(int customerId)
     {
-        return _dbContext.Customers.Find(customerId);
+        return await _dbContext.Customers.FindAsync(customerId);
     }
 
-    public List<Customer> FindCustomersWithPartySizeGreaterThan(int partySize)
+    public async Task<List<Customer>> FindCustomersWithPartySizeGreaterThan(int partySize)
     {
         var customers =
             _dbContext.Customers.FromSqlInterpolated($"EXEC sp_FindCustomersWithPartySizeGreaterThan {partySize}");
-        return customers.ToList();
+        return await customers.ToListAsync();
     }
 
-    public bool HasCustomerById(int customerId)
+    public async Task<bool> HasCustomerById(int customerId)
     {
-        return FindCustomerById(customerId) is not null;
+        return await FindCustomerById(customerId) is not null;
     }
 }

@@ -5,8 +5,8 @@ namespace RestaurantReservation.Db.Services;
 
 public interface IMenuItemService
 {
-    Result<int> CreateItem(MenuItemDto menuItemDto);
-    Result<MenuItemDto> UpdateItem(MenuItemDto menuItemDto);
-    Result DeleteItem(int menuItemId);
-    Result<List<MenuItemDto>> ListOrderedMenuItems(int reservationId);
+    Task<Result<int>> CreateItem(MenuItemDto menuItemDto);
+    Task<Result<MenuItemDto>> UpdateItem(MenuItemDto menuItemDto);
+    Task<Result> DeleteItem(int menuItemId);
+    Task<Result<List<MenuItemDto>>> ListOrderedMenuItems(int reservationId);
 }

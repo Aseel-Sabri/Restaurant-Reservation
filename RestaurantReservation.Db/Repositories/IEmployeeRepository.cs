@@ -5,12 +5,12 @@ namespace RestaurantReservation.Db.Repositories;
 
 public interface IEmployeeRepository
 {
-    int CreateEmployee(Employee employee);
-    Employee UpdateEmployee(Employee employee);
-    bool DeleteEmployee(int employeeId);
-    Employee? FindEmployeeById(int employeeId);
-    bool HasEmployeeById(int employeeId);
-    List<Employee> GetManagers();
-    double CalculateAverageOrderAmount(int employeeId);
-    List<EmployeeDetails> GetEmployeesDetails();
+    Task<int> CreateEmployee(Employee employee);
+    Task<Employee> UpdateEmployee(Employee employee);
+    Task<bool> DeleteEmployee(int employeeId);
+    Task<Employee?> FindEmployeeById(int employeeId);
+    Task<bool> HasEmployeeById(int employeeId);
+    Task<List<Employee>> GetManagers();
+    Task<double> CalculateAverageOrderAmount(int employeeId);
+    Task<List<EmployeeDetails>> GetEmployeesDetails();
 }

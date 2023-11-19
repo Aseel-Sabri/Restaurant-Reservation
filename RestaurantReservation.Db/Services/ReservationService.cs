@@ -22,15 +22,15 @@ public class ReservationService : IReservationService
         _restaurantRepository = restaurantRepository;
     }
 
-    public Result<int> CreateReservation(ReservationDto reservationDto)
+    public async Task<Result<int>> CreateReservation(ReservationDto reservationDto)
     {
         if (reservationDto.HasAnyNullOrEmptyFields())
             return Result.Fail($"All Reservation Fields Must Be Provided");
 
-        if (!_restaurantRepository.HasRestaurantById((int)reservationDto.RestaurantId!))
+        if (!await _restaurantRepository.HasRestaurantById((int)reservationDto.RestaurantId!))
             return Result.Fail($"No Restaurant With ID {reservationDto.RestaurantId} Exists");
 
-        var table = _tableRepository.FindTableById((int)reservationDto.TableId!);
+        var table = await _tableRepository.FindTableById((int)reservationDto.TableId!);
         if (table is null)
             return Result.Fail($"No Table With ID {reservationDto.TableId} Exists");
 
@@ -38,7 +38,7 @@ public class ReservationService : IReservationService
             return Result.Fail(
                 $"Table With ID {reservationDto.TableId} Does Not Belong To Restaurant With ID {reservationDto.RestaurantId}");
 
-        if (!_customerRepository.HasCustomerById((int)reservationDto.CustomerId!))
+        if (!await _customerRepository.HasCustomerById((int)reservationDto.CustomerId!))
             return Result.Fail($"No Customer With ID {reservationDto.CustomerId} Exists");
 
         var reservation = new Reservation()
@@ -50,13 +50,13 @@ public class ReservationService : IReservationService
             ReservationDate = (DateTime)reservationDto.ReservationDate!
         };
 
-        var reservationId = _reservationRepository.CreateReservation(reservation);
+        var reservationId = await _reservationRepository.CreateReservation(reservation);
         return Result.Ok(reservationId);
     }
 
-    public Result<ReservationDto> UpdateReservation(ReservationDto reservationDto)
+    public async Task<Result<ReservationDto>> UpdateReservation(ReservationDto reservationDto)
     {
-        var reservation = _reservationRepository.FindReservationById(reservationDto.ReservationId);
+        var reservation = await _reservationRepository.FindReservationById(reservationDto.ReservationId);
         if (reservation is null)
             return Result.Fail($"No Reservation With ID {reservationDto.ReservationId} Exists");
 
@@ -66,7 +66,7 @@ public class ReservationService : IReservationService
 
         if (reservationDto.TableId is not null)
         {
-            var table = _tableRepository.FindTableById((int)reservationDto.TableId!);
+            var table = await _tableRepository.FindTableById((int)reservationDto.TableId!);
             if (table is null)
                 return Result.Fail($"No Table With ID {reservationDto.TableId} Exists");
 
@@ -79,27 +79,27 @@ public class ReservationService : IReservationService
 
         if (reservationDto.CustomerId is not null)
         {
-            if (!_customerRepository.HasCustomerById((int)reservationDto.CustomerId!))
+            if (!await _customerRepository.HasCustomerById((int)reservationDto.CustomerId!))
                 return Result.Fail($"No Customer With ID {reservationDto.CustomerId} Exists");
 
             reservation.CustomerId = (int)reservationDto.CustomerId;
         }
 
 
-        var updatedReservation = _reservationRepository.UpdateReservation(reservation);
+        var updatedReservation = await _reservationRepository.UpdateReservation(reservation);
         return Result.Ok(MapToReservationDto(updatedReservation));
     }
 
-    public Result DeleteReservation(int reservationId)
+    public async Task<Result> DeleteReservation(int reservationId)
     {
-        if (!_reservationRepository.HasReservationById(reservationId))
+        if (!await _reservationRepository.HasReservationById(reservationId))
             return Result.Fail($"No Reservation With ID {reservationId} Exists");
 
 
         var errorMessage = $"Could Not Delete Reservation With ID {reservationId}";
         try
         {
-            return Result.OkIf(_reservationRepository.DeleteReservation(reservationId),
+            return Result.OkIf(await _reservationRepository.DeleteReservation(reservationId),
                 errorMessage);
         }
         catch (Exception e)
@@ -108,19 +108,19 @@ public class ReservationService : IReservationService
         }
     }
 
-    public Result<List<ReservationDto>> GetReservationsByCustomer(int customerId)
+    public async Task<Result<List<ReservationDto>>> GetReservationsByCustomer(int customerId)
     {
-        if (!_customerRepository.HasCustomerById(customerId))
+        if (!await _customerRepository.HasCustomerById(customerId))
             return Result.Fail($"No Customer With ID {customerId} Exists");
 
-        return _reservationRepository.GetReservationsByCustomer(customerId)
+        return (await _reservationRepository.GetReservationsByCustomer(customerId))
             .Select(MapToReservationDto)
             .ToList();
     }
 
-    public List<ReservationDetails> GetReservationsWithCustomerAndRestaurantDetails()
+    public async Task<List<ReservationDetails>> GetReservationsWithCustomerAndRestaurantDetails()
     {
-        return _reservationRepository.GetReservationsWithCustomerAndRestaurantDetails();
+        return await _reservationRepository.GetReservationsWithCustomerAndRestaurantDetails();
     }
 
     private ReservationDto MapToReservationDto(Reservation reservation)

@@ -5,8 +5,8 @@ namespace RestaurantReservation.Db.Services;
 
 public interface ICustomerService
 {
-    Result<int> CreateCustomer(CustomerDto customerDto);
-    Result<CustomerDto> UpdateCustomer(CustomerDto customerDto);
-    Result DeleteCustomer(int customerId);
-    List<CustomerDto> FindCustomersWithPartySizeGreaterThan(int partySize);
+    Task<Result<int>> CreateCustomer(CustomerDto customerDto);
+    Task<Result<CustomerDto>> UpdateCustomer(CustomerDto customerDto);
+    Task<Result> DeleteCustomer(int customerId);
+    Task<List<CustomerDto>> FindCustomersWithPartySizeGreaterThan(int partySize);
 }

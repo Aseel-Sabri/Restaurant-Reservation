@@ -6,10 +6,10 @@ namespace RestaurantReservation.Db.Services;
 
 public interface IEmployeeService
 {
-    Result<int> CreateEmployee(EmployeeDto employeeDto);
-    Result<EmployeeDto> UpdateEmployee(EmployeeDto employeeDto);
-    Result DeleteEmployee(int employeeId);
-    List<EmployeeDto> GetManagers();
-    Result<double> CalculateAverageOrderAmount(int employeeId);
-    List<EmployeeDetails> GetEmployeesDetails();
+    Task<Result<int>> CreateEmployee(EmployeeDto employeeDto);
+    Task<Result<EmployeeDto>> UpdateEmployee(EmployeeDto employeeDto);
+    Task<Result> DeleteEmployee(int employeeId);
+    Task<List<EmployeeDto>> GetManagers();
+    Task<Result<double>> CalculateAverageOrderAmount(int employeeId);
+    Task<List<EmployeeDetails>> GetEmployeesDetails();
 }

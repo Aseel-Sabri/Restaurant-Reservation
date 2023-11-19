@@ -14,7 +14,7 @@ public class CustomerService : ICustomerService
         _customerRepository = customerRepository;
     }
 
-    public Result<int> CreateCustomer(CustomerDto customerDto)
+    public async Task<Result<int>> CreateCustomer(CustomerDto customerDto)
     {
         if (customerDto.HasAnyNullOrEmptyFields())
         {
@@ -28,13 +28,13 @@ public class CustomerService : ICustomerService
             Email = customerDto.Email,
             PhoneNumber = customerDto.PhoneNumber
         };
-        var customerId = _customerRepository.CreateCustomer(customer);
+        var customerId = await _customerRepository.CreateCustomer(customer);
         return Result.Ok(customerId);
     }
 
-    public Result<CustomerDto> UpdateCustomer(CustomerDto customerDto)
+    public async Task<Result<CustomerDto>> UpdateCustomer(CustomerDto customerDto)
     {
-        var customer = _customerRepository.FindCustomerById(customerDto.CustomerId);
+        var customer = await _customerRepository.FindCustomerById(customerDto.CustomerId);
         if (customer is null)
             return Result.Fail($"No Customer with ID {customerDto.CustomerId} Exists");
 
@@ -44,18 +44,18 @@ public class CustomerService : ICustomerService
         customer.Email = customerDto.Email ?? customer.Email;
         customer.PhoneNumber = customerDto.PhoneNumber ?? customer.PhoneNumber;
 
-        var updatedCustomer = _customerRepository.UpdateCustomer(customer);
+        var updatedCustomer = await _customerRepository.UpdateCustomer(customer);
         return Result.Ok(MapToCustomerDto(updatedCustomer));
     }
 
-    public Result DeleteCustomer(int customerId)
+    public async Task<Result> DeleteCustomer(int customerId)
     {
-        if (!_customerRepository.HasCustomerById(customerId))
+        if (!await _customerRepository.HasCustomerById(customerId))
             return Result.Fail($"No Customer With ID {customerId} Exists");
 
         try
         {
-            return Result.OkIf(_customerRepository.DeleteCustomer(customerId),
+            return Result.OkIf(await _customerRepository.DeleteCustomer(customerId),
                 $"Could Not Delete Customer With ID {customerId}");
         }
         catch (Exception e)
@@ -65,9 +65,9 @@ public class CustomerService : ICustomerService
         }
     }
 
-    public List<CustomerDto> FindCustomersWithPartySizeGreaterThan(int partySize)
+    public async Task<List<CustomerDto>> FindCustomersWithPartySizeGreaterThan(int partySize)
     {
-        return _customerRepository.FindCustomersWithPartySizeGreaterThan(partySize)
+        return (await _customerRepository.FindCustomersWithPartySizeGreaterThan(partySize))
             .Select(MapToCustomerDto)
             .ToList();
     }

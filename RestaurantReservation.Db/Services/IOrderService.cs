@@ -5,11 +5,11 @@ namespace RestaurantReservation.Db.Services;
 
 public interface IOrderService
 {
-    Result<int> CreateOrder(OrderDto orderDto);
-    Result<OrderDto> UpdateOrder(OrderDto orderDto);
-    Result DeleteOrder(int orderId);
-    Result<int> CreateOrderItem(OrderItemDto orderItemDto);
-    Result<OrderItemDto> UpdateOrderItemQuantity(int orderItemId, int quantity);
-    Result DeleteOrderItem(int orderItemId);
-    Result<List<OrdersAndMenuItemsDto>> ListOrdersAndMenuItems(int reservationId);
+    Task<Result<int>> CreateOrder(OrderDto orderDto);
+    Task<Result<OrderDto>> UpdateOrder(OrderDto orderDto);
+    Task<Result> DeleteOrder(int orderId);
+    Task<Result<int>> CreateOrderItem(OrderItemDto orderItemDto);
+    Task<Result<OrderItemDto>> UpdateOrderItemQuantity(int orderItemId, int quantity);
+    Task<Result> DeleteOrderItem(int orderItemId);
+    Task<Result<List<OrdersAndMenuItemsDto>>> ListOrdersAndMenuItems(int reservationId);
 }

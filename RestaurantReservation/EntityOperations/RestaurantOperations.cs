@@ -12,7 +12,7 @@ public class RestaurantOperations
         _restaurantService = restaurantService;
     }
 
-    public void CreateRestaurant()
+    public async Task CreateRestaurant()
     {
         var restaurantDto = new RestaurantDto()
         {
@@ -22,7 +22,7 @@ public class RestaurantOperations
             PhoneNumber = "111-2222"
         };
 
-        var result = _restaurantService.CreateRestaurant(restaurantDto);
+        var result = await _restaurantService.CreateRestaurant(restaurantDto);
         if (result.IsSuccess)
         {
             var createdRestaurantId = result.Value;
@@ -36,7 +36,7 @@ public class RestaurantOperations
         Console.WriteLine();
     }
 
-    public void UpdateRestaurant()
+    public async Task UpdateRestaurant()
     {
         var restaurantDto = new RestaurantDto()
         {
@@ -44,7 +44,7 @@ public class RestaurantOperations
             OpeningHours = "09:00 - 23:00"
         };
 
-        var result = _restaurantService.UpdateRestaurant(restaurantDto);
+        var result = await _restaurantService.UpdateRestaurant(restaurantDto);
         if (result.IsSuccess)
         {
             Console.WriteLine($"Updated Restaurant: {Environment.NewLine}{result.Value}");
@@ -57,9 +57,9 @@ public class RestaurantOperations
         Console.WriteLine();
     }
 
-    public void DeleteRestaurant(int restaurantId)
+    public async Task DeleteRestaurant(int restaurantId)
     {
-        var result = _restaurantService.DeleteRestaurant(restaurantId);
+        var result = await _restaurantService.DeleteRestaurant(restaurantId);
 
         if (result.IsSuccess)
         {
@@ -73,9 +73,9 @@ public class RestaurantOperations
         Console.WriteLine();
     }
 
-    public void CalculateRestaurantTotalRevenue(int restaurantId)
+    public async Task CalculateRestaurantTotalRevenue(int restaurantId)
     {
-        var result = _restaurantService.CalculateRestaurantTotalRevenue(restaurantId);
+        var result = await _restaurantService.CalculateRestaurantTotalRevenue(restaurantId);
         if (result.IsFailed)
         {
             result.Errors.ForEach(error => Console.WriteLine(error.Message));

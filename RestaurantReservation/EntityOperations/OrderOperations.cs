@@ -12,7 +12,7 @@ public class OrderOperations
         _orderService = orderService;
     }
 
-    public void CreateOrder()
+    public async Task CreateOrder()
     {
         var orderDto = new OrderDto()
         {
@@ -21,7 +21,7 @@ public class OrderOperations
             ReservationId = 2
         };
 
-        var result = _orderService.CreateOrder(orderDto);
+        var result = await _orderService.CreateOrder(orderDto);
         if (result.IsSuccess)
         {
             var createdOrderId = result.Value;
@@ -35,7 +35,7 @@ public class OrderOperations
         Console.WriteLine();
     }
 
-    public void UpdateOrder()
+    public async Task UpdateOrder()
     {
         var orderDto = new OrderDto()
         {
@@ -43,7 +43,7 @@ public class OrderOperations
             EmployeeId = 2
         };
 
-        var result = _orderService.UpdateOrder(orderDto);
+        var result = await _orderService.UpdateOrder(orderDto);
         if (result.IsSuccess)
         {
             Console.WriteLine($"Updated Order: {Environment.NewLine}{result.Value}");
@@ -56,9 +56,9 @@ public class OrderOperations
         Console.WriteLine();
     }
 
-    public void DeleteOrder(int orderId)
+    public async Task DeleteOrder(int orderId)
     {
-        var result = _orderService.DeleteOrder(orderId);
+        var result = await _orderService.DeleteOrder(orderId);
 
         if (result.IsSuccess)
         {
@@ -72,9 +72,9 @@ public class OrderOperations
         Console.WriteLine();
     }
 
-    public void ListOrdersAndMenuItems(int reservationId)
+    public async Task ListOrdersAndMenuItems(int reservationId)
     {
-        var result = _orderService.ListOrdersAndMenuItems(reservationId);
+        var result = await _orderService.ListOrdersAndMenuItems(reservationId);
         if (result.IsFailed)
         {
             result.Errors.ForEach(error => Console.WriteLine(error.Message));
@@ -107,7 +107,7 @@ public class OrderOperations
         });
     }
 
-    public void CreateOrderItem()
+    public async Task CreateOrderItem()
     {
         var orderItemDto = new OrderItemDto()
         {
@@ -116,7 +116,7 @@ public class OrderOperations
             MenuItemId = 1
         };
 
-        var result = _orderService.CreateOrderItem(orderItemDto);
+        var result = await _orderService.CreateOrderItem(orderItemDto);
         if (result.IsSuccess)
         {
             var createdOrderId = result.Value;
@@ -130,9 +130,9 @@ public class OrderOperations
         Console.WriteLine();
     }
 
-    public void UpdateOrderItemQuantity()
+    public async Task UpdateOrderItemQuantity()
     {
-        var result = _orderService.UpdateOrderItemQuantity(26, 1);
+        var result = await _orderService.UpdateOrderItemQuantity(26, 1);
         if (result.IsSuccess)
         {
             Console.WriteLine($"Updated Order Item: {Environment.NewLine}{result.Value}");
@@ -145,9 +145,9 @@ public class OrderOperations
         Console.WriteLine();
     }
 
-    public void DeleteOrderItem(int orderId)
+    public async Task DeleteOrderItem(int orderId)
     {
-        var result = _orderService.DeleteOrderItem(orderId);
+        var result = await _orderService.DeleteOrderItem(orderId);
 
         if (result.IsSuccess)
         {

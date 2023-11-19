@@ -14,7 +14,7 @@ public class RestaurantService : IRestaurantService
         _restaurantRepository = restaurantRepository;
     }
 
-    public Result<int> CreateRestaurant(RestaurantDto restaurantDto)
+    public async Task<Result<int>> CreateRestaurant(RestaurantDto restaurantDto)
     {
         if (restaurantDto.HasAnyNullOrEmptyFields())
         {
@@ -29,13 +29,13 @@ public class RestaurantService : IRestaurantService
             PhoneNumber = restaurantDto.PhoneNumber,
             Name = restaurantDto.Name
         };
-        var restaurantId = _restaurantRepository.CreateRestaurant(restaurant);
+        var restaurantId = await _restaurantRepository.CreateRestaurant(restaurant);
         return Result.Ok(restaurantId);
     }
 
-    public Result<RestaurantDto> UpdateRestaurant(RestaurantDto restaurantDto)
+    public async Task<Result<RestaurantDto>> UpdateRestaurant(RestaurantDto restaurantDto)
     {
-        var restaurant = _restaurantRepository.FindRestaurantById(restaurantDto.RestaurantId);
+        var restaurant = await _restaurantRepository.FindRestaurantById(restaurantDto.RestaurantId);
         if (restaurant is null)
             return Result.Fail($"No Restaurant with ID {restaurantDto.RestaurantId} Exists");
 
@@ -45,18 +45,18 @@ public class RestaurantService : IRestaurantService
         restaurant.PhoneNumber = restaurantDto.PhoneNumber ?? restaurant.PhoneNumber;
         restaurant.OpeningHours = restaurantDto.OpeningHours ?? restaurant.OpeningHours;
 
-        var updatedRestaurant = _restaurantRepository.UpdateRestaurant(restaurant);
+        var updatedRestaurant = await _restaurantRepository.UpdateRestaurant(restaurant);
         return Result.Ok(MapToRestaurantDto(updatedRestaurant));
     }
 
-    public Result DeleteRestaurant(int restaurantId)
+    public async Task<Result> DeleteRestaurant(int restaurantId)
     {
-        if (!_restaurantRepository.HasRestaurantById(restaurantId))
+        if (!await _restaurantRepository.HasRestaurantById(restaurantId))
             return Result.Fail($"No Restaurant With ID {restaurantId} Exists");
 
         try
         {
-            return Result.OkIf(_restaurantRepository.DeleteRestaurant(restaurantId),
+            return Result.OkIf(await _restaurantRepository.DeleteRestaurant(restaurantId),
                 $"Could Not Delete Restaurant With ID {restaurantId}");
         }
         catch (Exception e)
@@ -66,12 +66,12 @@ public class RestaurantService : IRestaurantService
         }
     }
 
-    public Result<double> CalculateRestaurantTotalRevenue(int restaurantId)
+    public async Task<Result<double>> CalculateRestaurantTotalRevenue(int restaurantId)
     {
-        if (!_restaurantRepository.HasRestaurantById(restaurantId))
+        if (!await _restaurantRepository.HasRestaurantById(restaurantId))
             return Result.Fail($"No Restaurant With ID {restaurantId} Exists");
 
-        return _restaurantRepository.CalculateRestaurantTotalRevenue(restaurantId);
+        return await _restaurantRepository.CalculateRestaurantTotalRevenue(restaurantId);
     }
 
     private RestaurantDto MapToRestaurantDto(Restaurant restaurant)

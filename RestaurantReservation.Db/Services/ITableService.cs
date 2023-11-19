@@ -5,7 +5,7 @@ namespace RestaurantReservation.Db.Services;
 
 public interface ITableService
 {
-    Result<int> CreateTable(TableDto tableDto);
-    Result<TableDto> UpdateTableCapacity(int tableId, int capacity);
-    Result DeleteTable(int tableId);
+    Task<Result<int>> CreateTable(TableDto tableDto);
+    Task<Result<TableDto>> UpdateTableCapacity(int tableId, int capacity);
+    Task<Result> DeleteTable(int tableId);
 }

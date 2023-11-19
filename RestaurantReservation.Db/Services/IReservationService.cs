@@ -6,9 +6,9 @@ namespace RestaurantReservation.Db.Services;
 
 public interface IReservationService
 {
-    Result<int> CreateReservation(ReservationDto reservationDto);
-    Result<ReservationDto> UpdateReservation(ReservationDto reservationDto);
-    Result DeleteReservation(int reservationId);
-    Result<List<ReservationDto>> GetReservationsByCustomer(int customerId);
-    List<ReservationDetails> GetReservationsWithCustomerAndRestaurantDetails();
+    Task<Result<int>> CreateReservation(ReservationDto reservationDto);
+    Task<Result<ReservationDto>> UpdateReservation(ReservationDto reservationDto);
+    Task<Result> DeleteReservation(int reservationId);
+    Task<Result<List<ReservationDto>>> GetReservationsByCustomer(int customerId);
+    Task<List<ReservationDetails>> GetReservationsWithCustomerAndRestaurantDetails();
 }

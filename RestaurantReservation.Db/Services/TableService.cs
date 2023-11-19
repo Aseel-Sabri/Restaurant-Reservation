@@ -16,14 +16,14 @@ public class TableService : ITableService
         _restaurantRepository = restaurantRepository;
     }
 
-    public Result<int> CreateTable(TableDto tableDto)
+    public async Task<Result<int>> CreateTable(TableDto tableDto)
     {
         if (tableDto.HasAnyNullOrEmptyFields())
         {
             return Result.Fail($"All Table Fields Must Be Provided");
         }
 
-        if (!_restaurantRepository.HasRestaurantById((int)tableDto.RestaurantId!))
+        if (!await _restaurantRepository.HasRestaurantById((int)tableDto.RestaurantId!))
         {
             return Result.Fail($"No Restaurant With ID {tableDto.RestaurantId} Exists");
         }
@@ -33,30 +33,30 @@ public class TableService : ITableService
             RestaurantId = (int)tableDto.RestaurantId,
             Capacity = (int)tableDto.Capacity!
         };
-        var tableId = _tableRepository.CreateTable(table);
+        var tableId = await _tableRepository.CreateTable(table);
         return Result.Ok(tableId);
     }
 
-    public Result<TableDto> UpdateTableCapacity(int tableId, int capacity)
+    public async Task<Result<TableDto>> UpdateTableCapacity(int tableId, int capacity)
     {
-        var table = _tableRepository.FindTableById(tableId);
+        var table = await _tableRepository.FindTableById(tableId);
         if (table is null)
             return Result.Fail($"No Table with ID {tableId} Exists");
 
         table.Capacity = capacity;
 
-        var updatedTable = _tableRepository.UpdateTable(table);
+        var updatedTable = await _tableRepository.UpdateTable(table);
         return Result.Ok(MapToTableDto(updatedTable));
     }
 
-    public Result DeleteTable(int tableId)
+    public async Task<Result> DeleteTable(int tableId)
     {
-        if (!_tableRepository.HasTableById(tableId))
+        if (!await _tableRepository.HasTableById(tableId))
             return Result.Fail($"No Table With ID {tableId} Exists");
 
         try
         {
-            return Result.OkIf(_tableRepository.DeleteTable(tableId),
+            return Result.OkIf(await _tableRepository.DeleteTable(tableId),
                 $"Could Not Delete Table With ID {tableId}");
         }
         catch (Exception e)

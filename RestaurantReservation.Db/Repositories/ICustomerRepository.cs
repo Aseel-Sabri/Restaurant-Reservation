@@ -4,10 +4,10 @@ namespace RestaurantReservation.Db.Repositories;
 
 public interface ICustomerRepository
 {
-    int CreateCustomer(Customer customer);
-    Customer UpdateCustomer(Customer customer);
-    bool DeleteCustomer(int customerId);
-    Customer? FindCustomerById(int customerId);
-    bool HasCustomerById(int customerId);
-    List<Customer> FindCustomersWithPartySizeGreaterThan(int partySize);
+    Task<int> CreateCustomer(Customer customer);
+    Task<Customer> UpdateCustomer(Customer customer);
+    Task<bool> DeleteCustomer(int customerId);
+    Task<Customer?> FindCustomerById(int customerId);
+    Task<bool> HasCustomerById(int customerId);
+    Task<List<Customer>> FindCustomersWithPartySizeGreaterThan(int partySize);
 }

@@ -12,7 +12,7 @@ public class EmployeeOperations
         _employeeService = employeeService;
     }
 
-    public void CreateEmployee()
+    public async Task CreateEmployee()
     {
         var employeeDto = new EmployeeDto()
         {
@@ -23,7 +23,7 @@ public class EmployeeOperations
         };
 
 
-        var result = _employeeService.CreateEmployee(employeeDto);
+        var result = await _employeeService.CreateEmployee(employeeDto);
         if (result.IsSuccess)
         {
             var createdEmployeeId = result.Value;
@@ -37,7 +37,7 @@ public class EmployeeOperations
         Console.WriteLine();
     }
 
-    public void UpdateEmployee()
+    public async Task UpdateEmployee()
     {
         var employeeDto = new EmployeeDto()
         {
@@ -46,7 +46,7 @@ public class EmployeeOperations
             LastName = "Sabri"
         };
 
-        var result = _employeeService.UpdateEmployee(employeeDto);
+        var result = await _employeeService.UpdateEmployee(employeeDto);
         if (result.IsSuccess)
         {
             Console.WriteLine($"Updated Employee: {Environment.NewLine}{result.Value}");
@@ -60,9 +60,9 @@ public class EmployeeOperations
     }
 
 
-    public void DeleteEmployee(int employeeId)
+    public async Task DeleteEmployee(int employeeId)
     {
-        var result = _employeeService.DeleteEmployee(employeeId);
+        var result = await _employeeService.DeleteEmployee(employeeId);
 
         if (result.IsSuccess)
         {
@@ -76,18 +76,19 @@ public class EmployeeOperations
         Console.WriteLine();
     }
 
-    public void ListManagers()
+    public async Task ListManagers()
     {
-        _employeeService.GetManagers().ForEach(manager =>
-        {
-            Console.WriteLine(manager);
-            Console.WriteLine();
-        });
+        (await _employeeService.GetManagers())
+            .ForEach(manager =>
+            {
+                Console.WriteLine(manager);
+                Console.WriteLine();
+            });
     }
 
-    public void CalculateAverageOrderAmount(int employeeId)
+    public async Task CalculateAverageOrderAmount(int employeeId)
     {
-        var result = _employeeService.CalculateAverageOrderAmount(employeeId);
+        var result = await _employeeService.CalculateAverageOrderAmount(employeeId);
 
         if (result.IsFailed)
         {
@@ -100,9 +101,9 @@ public class EmployeeOperations
         Console.WriteLine();
     }
 
-    public void GetEmployeesDetails()
+    public async Task GetEmployeesDetails()
     {
-        var employeesDetails = _employeeService.GetEmployeesDetails();
+        var employeesDetails = await _employeeService.GetEmployeesDetails();
 
         if (!employeesDetails.Any())
         {

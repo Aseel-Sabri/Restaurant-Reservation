@@ -13,7 +13,7 @@ public class CustomerOperations
     }
 
 
-    public void CreateCustomer()
+    public async Task CreateCustomer()
     {
         var customerDto = new CustomerDto()
         {
@@ -24,7 +24,7 @@ public class CustomerOperations
         };
 
 
-        var result = _customerService.CreateCustomer(customerDto);
+        var result = await _customerService.CreateCustomer(customerDto);
         if (result.IsSuccess)
         {
             var createdCustomerId = result.Value;
@@ -38,7 +38,7 @@ public class CustomerOperations
         Console.WriteLine();
     }
 
-    public void UpdateCustomer()
+    public async Task UpdateCustomer()
     {
         var customerDto = new CustomerDto()
         {
@@ -48,7 +48,7 @@ public class CustomerOperations
             Email = "leen.sabri@example.com"
         };
 
-        var result = _customerService.UpdateCustomer(customerDto);
+        var result = await _customerService.UpdateCustomer(customerDto);
         if (result.IsSuccess)
         {
             Console.WriteLine($"Updated Customer: {Environment.NewLine}{result.Value}");
@@ -61,9 +61,9 @@ public class CustomerOperations
         Console.WriteLine();
     }
 
-    public void DeleteCustomer(int customerId)
+    public async Task DeleteCustomer(int customerId)
     {
-        var result = _customerService.DeleteCustomer(customerId);
+        var result = await _customerService.DeleteCustomer(customerId);
 
         if (result.IsSuccess)
         {
@@ -77,9 +77,9 @@ public class CustomerOperations
         Console.WriteLine();
     }
 
-    public void FindCustomersWithPartySizeGreaterThan(int partySize)
+    public async Task FindCustomersWithPartySizeGreaterThan(int partySize)
     {
-        var customerDtos = _customerService.FindCustomersWithPartySizeGreaterThan(partySize);
+        var customerDtos = await _customerService.FindCustomersWithPartySizeGreaterThan(partySize);
         if (!customerDtos.Any())
         {
             Console.WriteLine("No Customers Were Found");

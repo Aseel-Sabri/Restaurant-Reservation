@@ -21,15 +21,15 @@ public class OrderService : IOrderService
         _employeeRepository = employeeRepository;
     }
 
-    public Result<int> CreateOrder(OrderDto orderDto)
+    public async Task<Result<int>> CreateOrder(OrderDto orderDto)
     {
         if (orderDto.HasAnyNullOrEmptyFields())
             return Result.Fail($"All Order Fields Must Be Provided");
 
-        if (!_employeeRepository.HasEmployeeById((int)orderDto.EmployeeId!))
+        if (!await _employeeRepository.HasEmployeeById((int)orderDto.EmployeeId!))
             return Result.Fail($"No Employee With ID {orderDto.EmployeeId} Exists");
 
-        if (!_reservationRepository.HasReservationById((int)orderDto.ReservationId!))
+        if (!await _reservationRepository.HasReservationById((int)orderDto.ReservationId!))
             return Result.Fail($"No Reservation With ID {orderDto.ReservationId} Exists");
 
         // Should I check if both employee and reservation belong to the same restaurant? 
@@ -41,19 +41,19 @@ public class OrderService : IOrderService
             OrderDate = (DateTime)orderDto.OrderDate!,
         };
 
-        var orderId = _orderRepository.CreateOrder(order);
+        var orderId = await _orderRepository.CreateOrder(order);
         return Result.Ok(orderId);
     }
 
-    public Result<OrderDto> UpdateOrder(OrderDto orderDto)
+    public async Task<Result<OrderDto>> UpdateOrder(OrderDto orderDto)
     {
-        var order = _orderRepository.FindOrderById(orderDto.OrderId);
+        var order = await _orderRepository.FindOrderById(orderDto.OrderId);
         if (order is null)
             return Result.Fail($"No Order with ID {orderDto.OrderId} Exists");
 
         if (orderDto.ReservationId is not null)
         {
-            if (!_reservationRepository.HasReservationById((int)orderDto.ReservationId))
+            if (!await _reservationRepository.HasReservationById((int)orderDto.ReservationId))
                 return Result.Fail($"No Reservation with ID {orderDto.ReservationId} Exists");
 
             order.ReservationId = (int)orderDto.ReservationId;
@@ -61,7 +61,7 @@ public class OrderService : IOrderService
 
         if (orderDto.EmployeeId is not null)
         {
-            if (!_employeeRepository.HasEmployeeById((int)orderDto.EmployeeId))
+            if (!await _employeeRepository.HasEmployeeById((int)orderDto.EmployeeId))
                 return Result.Fail($"No Employee with ID {orderDto.EmployeeId} Exists");
 
             order.EmployeeId = (int)orderDto.EmployeeId;
@@ -69,19 +69,19 @@ public class OrderService : IOrderService
 
         order.OrderDate = orderDto.OrderDate ?? order.OrderDate;
 
-        var updatedOrder = _orderRepository.UpdateOrder(order);
+        var updatedOrder = await _orderRepository.UpdateOrder(order);
         return Result.Ok(MapToOrderDto(updatedOrder));
     }
 
-    public Result DeleteOrder(int orderId)
+    public async Task<Result> DeleteOrder(int orderId)
     {
-        if (!_orderRepository.HasOrderById(orderId))
+        if (!await _orderRepository.HasOrderById(orderId))
             return Result.Fail($"No Order With ID {orderId} Exists");
 
         var errorMessage = $"Could Not Delete Order With ID {orderId}";
         try
         {
-            return Result.OkIf(_orderRepository.DeleteOrder(orderId), errorMessage);
+            return Result.OkIf(await _orderRepository.DeleteOrder(orderId), errorMessage);
         }
         catch (Exception e)
         {
@@ -89,20 +89,20 @@ public class OrderService : IOrderService
         }
     }
 
-    public Result<List<OrdersAndMenuItemsDto>> ListOrdersAndMenuItems(int reservationId)
+    public async Task<Result<List<OrdersAndMenuItemsDto>>> ListOrdersAndMenuItems(int reservationId)
     {
-        if (!_reservationRepository.HasReservationById(reservationId))
+        if (!await _reservationRepository.HasReservationById(reservationId))
             return Result.Fail($"No Reservation With ID {reservationId} Exists");
 
-        return _orderRepository.ListOrdersAndMenuItems(reservationId);
+        return await _orderRepository.ListOrdersAndMenuItems(reservationId);
     }
 
-    public Result<int> CreateOrderItem(OrderItemDto orderItemDto)
+    public async Task<Result<int>> CreateOrderItem(OrderItemDto orderItemDto)
     {
-        if (!_menuItemRepository.HasItemById(orderItemDto.MenuItemId))
+        if (!await _menuItemRepository.HasItemById(orderItemDto.MenuItemId))
             return Result.Fail($"No Menu Item With ID {orderItemDto.MenuItemId} Exists");
 
-        if (!_orderRepository.HasOrderById(orderItemDto.OrderId))
+        if (!await _orderRepository.HasOrderById(orderItemDto.OrderId))
             return Result.Fail($"No Order With ID {orderItemDto.OrderId} Exists");
 
 
@@ -113,29 +113,29 @@ public class OrderService : IOrderService
             Quantity = orderItemDto.Quantity
         };
 
-        var itemId = _orderRepository.CreateOrderItem(orderItem);
+        var itemId = await _orderRepository.CreateOrderItem(orderItem);
         return Result.Ok(itemId);
     }
 
-    public Result<OrderItemDto> UpdateOrderItemQuantity(int orderItemId, int quantity)
+    public async Task<Result<OrderItemDto>> UpdateOrderItemQuantity(int orderItemId, int quantity)
     {
-        var orderItem = _orderRepository.FindOrderItemById(orderItemId);
+        var orderItem = await _orderRepository.FindOrderItemById(orderItemId).ConfigureAwait(false);
         if (orderItem is null)
             return Result.Fail($"No OrderItem with ID {orderItemId} Exists");
 
         orderItem.Quantity = quantity;
-        var updatedOrderItem = _orderRepository.UpdateOrderItem(orderItem);
+        var updatedOrderItem = await _orderRepository.UpdateOrderItem(orderItem);
         return Result.Ok(MapToOrderItemDto(updatedOrderItem));
     }
 
-    public Result DeleteOrderItem(int orderItemId)
+    public async Task<Result> DeleteOrderItem(int orderItemId)
     {
-        var orderItem = _orderRepository.FindOrderItemById(orderItemId);
+        var orderItem = await _orderRepository.FindOrderItemById(orderItemId);
 
         if (orderItem is null)
             return Result.Fail($"No Order Item With ID {orderItemId} Exists");
 
-        return Result.OkIf(_orderRepository.DeleteOrderItem(orderItemId),
+        return Result.OkIf(await _orderRepository.DeleteOrderItem(orderItemId),
             $"Could Not Delete Order Item With ID {orderItemId}");
     }
 

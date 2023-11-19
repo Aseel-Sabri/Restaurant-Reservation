@@ -14,44 +14,44 @@ public class ReservationRepository : IReservationRepository
         _dbContext = dbContext;
     }
 
-    public int CreateReservation(Reservation reservation)
+    public async Task<int> CreateReservation(Reservation reservation)
     {
-        _dbContext.Reservations.Add(reservation);
-        _dbContext.SaveChanges();
+        await _dbContext.Reservations.AddAsync(reservation);
+        await _dbContext.SaveChangesAsync();
         return reservation.ReservationId;
     }
 
-    public Reservation UpdateReservation(Reservation reservation)
+    public async Task<Reservation> UpdateReservation(Reservation reservation)
     {
         _dbContext.Entry(reservation).State = EntityState.Modified;
-        _dbContext.SaveChanges();
-        return FindReservationById(reservation.ReservationId);
+        await _dbContext.SaveChangesAsync();
+        return await FindReservationById(reservation.ReservationId);
     }
 
-    public bool DeleteReservation(int reservationId)
+    public async Task<bool> DeleteReservation(int reservationId)
     {
-        var reservation = _dbContext.Reservations.Find(reservationId);
+        var reservation = await _dbContext.Reservations.FindAsync(reservationId);
         _dbContext.Reservations.Remove(reservation);
-        return _dbContext.SaveChanges() > 0;
+        return await _dbContext.SaveChangesAsync() > 0;
     }
 
-    public List<Reservation> GetReservationsByCustomer(int customerId)
+    public async Task<List<Reservation>> GetReservationsByCustomer(int customerId)
     {
-        return _dbContext.Reservations.Where(reservation => reservation.CustomerId == customerId).ToList();
+        return await _dbContext.Reservations.Where(reservation => reservation.CustomerId == customerId).ToListAsync();
     }
 
-    public List<ReservationDetails> GetReservationsWithCustomerAndRestaurantDetails()
+    public async Task<List<ReservationDetails>> GetReservationsWithCustomerAndRestaurantDetails()
     {
-        return _dbContext.ReservationsDetails.ToList();
+        return await _dbContext.ReservationsDetails.ToListAsync();
     }
 
-    public Reservation? FindReservationById(int reservationId)
+    public async Task<Reservation?> FindReservationById(int reservationId)
     {
-        return _dbContext.Reservations.Find(reservationId);
+        return await _dbContext.Reservations.FindAsync(reservationId);
     }
 
-    public bool HasReservationById(int reservationId)
+    public async Task<bool> HasReservationById(int reservationId)
     {
-        return FindReservationById(reservationId) is not null;
+        return await FindReservationById(reservationId) is not null;
     }
 }

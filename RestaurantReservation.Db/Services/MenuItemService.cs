@@ -9,24 +9,22 @@ public class MenuItemService : IMenuItemService
 {
     private readonly IMenuItemRepository _menuItemRepository;
     private readonly IRestaurantRepository _restaurantRepository;
-    private readonly IOrderRepository _orderRepository;
     private readonly IReservationRepository _reservationRepository;
 
     public MenuItemService(IMenuItemRepository menuItemRepository, IRestaurantRepository restaurantRepository,
-        IOrderRepository orderRepository, IReservationRepository reservationRepository)
+        IReservationRepository reservationRepository)
     {
         _menuItemRepository = menuItemRepository;
         _restaurantRepository = restaurantRepository;
-        _orderRepository = orderRepository;
         _reservationRepository = reservationRepository;
     }
 
-    public Result<int> CreateItem(MenuItemDto menuItemDto)
+    public async Task<Result<int>> CreateItem(MenuItemDto menuItemDto)
     {
         if (menuItemDto.HasAnyNullOrEmptyFields())
             return Result.Fail($"All MenuItem Fields Must Be Provided");
 
-        if (!_restaurantRepository.HasRestaurantById((int)menuItemDto.RestaurantId!))
+        if (!await _restaurantRepository.HasRestaurantById((int)menuItemDto.RestaurantId!))
             return Result.Fail($"No Restaurant With ID {menuItemDto.RestaurantId} Exists");
 
 
@@ -38,14 +36,14 @@ public class MenuItemService : IMenuItemService
             RestaurantId = (int)menuItemDto.RestaurantId!
         };
 
-        var itemId = _menuItemRepository.CreateItem(menuItem);
+        var itemId = await _menuItemRepository.CreateItem(menuItem);
         return Result.Ok(itemId);
     }
 
 
-    public Result<MenuItemDto> UpdateItem(MenuItemDto menuItemDto)
+    public async Task<Result<MenuItemDto>> UpdateItem(MenuItemDto menuItemDto)
     {
-        var menuItem = _menuItemRepository.FindItemById(menuItemDto.ItemId);
+        var menuItem = await _menuItemRepository.FindItemById(menuItemDto.ItemId);
         if (menuItem is null)
             return Result.Fail($"No Menu Item With ID {menuItemDto.ItemId} Exists");
 
@@ -56,18 +54,18 @@ public class MenuItemService : IMenuItemService
         menuItem.Price = menuItemDto.Price ?? menuItem.Price;
 
 
-        var updatedMenuItem = _menuItemRepository.UpdateItem(menuItem);
+        var updatedMenuItem = await _menuItemRepository.UpdateItem(menuItem);
         return Result.Ok(MapToMenuItemDto(updatedMenuItem));
     }
 
-    public Result DeleteItem(int menuItemId)
+    public async Task<Result> DeleteItem(int menuItemId)
     {
-        if (!_menuItemRepository.HasItemById(menuItemId))
+        if (!await _menuItemRepository.HasItemById(menuItemId))
             return Result.Fail($"No MenuItem With ID {menuItemId} Exists");
 
         try
         {
-            return Result.OkIf(_menuItemRepository.DeleteItem(menuItemId),
+            return Result.OkIf(await _menuItemRepository.DeleteItem(menuItemId),
                 $"Could Not Delete MenuItem With ID {menuItemId}");
         }
         catch (Exception e)
@@ -76,12 +74,12 @@ public class MenuItemService : IMenuItemService
         }
     }
 
-    public Result<List<MenuItemDto>> ListOrderedMenuItems(int reservationId)
+    public async Task<Result<List<MenuItemDto>>> ListOrderedMenuItems(int reservationId)
     {
-        if (!_reservationRepository.HasReservationById(reservationId))
+        if (!await _reservationRepository.HasReservationById(reservationId))
             return Result.Fail($"No Reservation With ID {reservationId} Exists");
 
-        return _menuItemRepository.ListOrderedMenuItems(reservationId)
+        return (await _menuItemRepository.ListOrderedMenuItems(reservationId))
             .Select(MapToMenuItemDto)
             .ToList();
     }

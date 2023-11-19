@@ -13,34 +13,34 @@ public class TableRepository : ITableRepository
         _dbContext = dbContext;
     }
 
-    public int CreateTable(Table table)
+    public async Task<int> CreateTable(Table table)
     {
-        _dbContext.Tables.Add(table);
-        _dbContext.SaveChanges();
+        await _dbContext.Tables.AddAsync(table);
+        await _dbContext.SaveChangesAsync();
         return table.TableId;
     }
 
-    public Table UpdateTable(Table table)
+    public async Task<Table> UpdateTable(Table table)
     {
         _dbContext.Entry(table).State = EntityState.Modified;
-        _dbContext.SaveChanges();
-        return FindTableById(table.TableId);
+        await _dbContext.SaveChangesAsync();
+        return await FindTableById(table.TableId);
     }
 
-    public bool DeleteTable(int tableId)
+    public async Task<bool> DeleteTable(int tableId)
     {
-        var table = _dbContext.Tables.Find(tableId);
+        var table = await _dbContext.Tables.FindAsync(tableId);
         _dbContext.Tables.Remove(table);
-        return _dbContext.SaveChanges() > 0;
+        return await _dbContext.SaveChangesAsync() > 0;
     }
 
-    public Table? FindTableById(int tableId)
+    public async Task<Table?> FindTableById(int tableId)
     {
-        return _dbContext.Tables.Find(tableId);
+        return await _dbContext.Tables.FindAsync(tableId);
     }
 
-    public bool HasTableById(int tableId)
+    public async Task<bool> HasTableById(int tableId)
     {
-        return FindTableById(tableId) is not null;
+        return await FindTableById(tableId) is not null;
     }
 }

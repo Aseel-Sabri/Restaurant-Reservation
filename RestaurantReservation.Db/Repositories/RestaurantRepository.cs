@@ -13,41 +13,41 @@ public class RestaurantRepository : IRestaurantRepository
         _dbContext = dbContext;
     }
 
-    public int CreateRestaurant(Restaurant restaurant)
+    public async Task<int> CreateRestaurant(Restaurant restaurant)
     {
-        _dbContext.Restaurants.Add(restaurant);
-        _dbContext.SaveChanges();
+        await _dbContext.Restaurants.AddAsync(restaurant);
+        await _dbContext.SaveChangesAsync();
         return restaurant.RestaurantId;
     }
 
-    public Restaurant UpdateRestaurant(Restaurant restaurant)
+    public async Task<Restaurant> UpdateRestaurant(Restaurant restaurant)
     {
         _dbContext.Entry(restaurant).State = EntityState.Modified;
-        _dbContext.SaveChanges();
-        return FindRestaurantById(restaurant.RestaurantId);
+        await _dbContext.SaveChangesAsync();
+        return await FindRestaurantById(restaurant.RestaurantId);
     }
 
-    public bool DeleteRestaurant(int restaurantId)
+    public async Task<bool> DeleteRestaurant(int restaurantId)
     {
-        var restaurant = FindRestaurantById(restaurantId);
+        var restaurant = await FindRestaurantById(restaurantId);
         _dbContext.Restaurants.Remove(restaurant);
-        return _dbContext.SaveChanges() > 0;
+        return await _dbContext.SaveChangesAsync() > 0;
     }
 
-    public double CalculateRestaurantTotalRevenue(int restaurantId)
+    public async Task<double> CalculateRestaurantTotalRevenue(int restaurantId)
     {
-        return (double)_dbContext.Restaurants
+        return (double)await _dbContext.Restaurants
             .Select(_ => _dbContext.RestaurantTotalRevenue(restaurantId))
-            .FirstOrDefault();
+            .FirstOrDefaultAsync();
     }
 
-    public Restaurant? FindRestaurantById(int restaurantId)
+    public async Task<Restaurant?> FindRestaurantById(int restaurantId)
     {
-        return _dbContext.Restaurants.Find(restaurantId);
+        return await _dbContext.Restaurants.FindAsync(restaurantId);
     }
 
-    public bool HasRestaurantById(int restaurantId)
+    public async Task<bool> HasRestaurantById(int restaurantId)
     {
-        return FindRestaurantById(restaurantId) is not null;
+        return await FindRestaurantById(restaurantId) is not null;
     }
 }
