@@ -1,5 +1,4 @@
-﻿using System.Transactions;
-using FluentResults;
+﻿using FluentResults;
 using RestaurantReservation.Db.DTOs;
 using RestaurantReservation.Db.Models;
 using RestaurantReservation.Db.Repositories;
@@ -54,24 +53,10 @@ public class MenuItemService : IMenuItemService
         menuItem.Name = menuItemDto.Name ?? menuItem.Name;
         menuItem.Description = menuItemDto.Description ?? menuItem.Description;
         menuItem.RestaurantId = menuItemDto.RestaurantId ?? menuItem.RestaurantId;
+        menuItem.Price = menuItemDto.Price ?? menuItem.Price;
 
-
-        using var scope = new TransactionScope();
-        if (menuItemDto.Price is not null)
-        {
-            var orderItems = _orderRepository.FindOrderItemsByMenuItem(menuItem.ItemId);
-            orderItems.ForEach(orderItem =>
-            {
-                orderItem.Order = _orderRepository.FindOrderById(orderItem.OrderId)!;
-                orderItem.Order.TotalAmount = (double)(orderItem.Quantity * menuItemDto.Price);
-                _orderRepository.UpdateOrder(orderItem.Order);
-            });
-
-            menuItem.Price = (double)menuItemDto.Price;
-        }
 
         var updatedMenuItem = _menuItemRepository.UpdateItem(menuItem);
-        scope.Complete();
         return Result.Ok(MapToMenuItemDto(updatedMenuItem));
     }
 

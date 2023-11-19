@@ -52,8 +52,6 @@ public class RestaurantReservationDbContext : Microsoft.EntityFrameworkCore.DbCo
 
         modelBuilder.Entity<Order>(orderBuilder =>
             {
-                orderBuilder.Property(order => order.TotalAmount)
-                    .HasColumnType("decimal(18, 2)");
                 orderBuilder.HasMany(order => order.OrderItems)
                     .WithOne(orderItem => orderItem.Order)
                     .HasForeignKey(orderItem => orderItem.OrderId)

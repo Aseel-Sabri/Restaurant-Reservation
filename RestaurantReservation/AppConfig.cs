@@ -44,7 +44,10 @@ public class AppConfig
         var connectionString = GetConnectionString();
 
         serviceCollection.AddDbContext<RestaurantReservationDbContext>(options =>
-            options.UseSqlServer(connectionString));
+        {
+            options.UseSqlServer(connectionString)
+                .UseProjectables();
+        });
     }
 
     private static void ConfigureEntitiesRepositories(IServiceCollection serviceCollection)

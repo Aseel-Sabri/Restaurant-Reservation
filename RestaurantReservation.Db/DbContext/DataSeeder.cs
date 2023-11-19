@@ -540,56 +540,49 @@ public static class DataSeeder
                 OrderId = 1,
                 EmployeeId = 1,
                 OrderDate = new DateTime(2023, 10, 8, 11, 1, 50, 514, DateTimeKind.Local).AddTicks(5424),
-                ReservationId = 1,
-                TotalAmount = 99.99
+                ReservationId = 1
             },
             new Order()
             {
                 OrderId = 2,
                 EmployeeId = 1,
                 OrderDate = new DateTime(2023, 10, 7, 11, 1, 50, 514, DateTimeKind.Local).AddTicks(5449),
-                ReservationId = 2,
-                TotalAmount = 81.69
+                ReservationId = 2
             },
             new Order()
             {
                 OrderId = 3,
                 EmployeeId = 1,
                 OrderDate = new DateTime(2023, 10, 6, 11, 1, 50, 514, DateTimeKind.Local).AddTicks(5460),
-                ReservationId = 3,
-                TotalAmount = 217.96
+                ReservationId = 3
             },
             new Order()
             {
                 OrderId = 4,
                 EmployeeId = 1,
                 OrderDate = new DateTime(2023, 10, 5, 11, 1, 50, 514, DateTimeKind.Local).AddTicks(5484),
-                ReservationId = 4,
-                TotalAmount = 174.75
+                ReservationId = 4
             },
             new Order()
             {
                 OrderId = 5,
                 EmployeeId = 1,
                 OrderDate = new DateTime(2023, 10, 4, 11, 1, 50, 514, DateTimeKind.Local).AddTicks(5502),
-                ReservationId = 5,
-                TotalAmount = 98.22
+                ReservationId = 5
             },
             new Order()
             {
                 OrderId = 6,
                 EmployeeId = 1,
                 OrderDate = new DateTime(2023, 10, 3, 11, 1, 50, 514, DateTimeKind.Local).AddTicks(5512),
-                ReservationId = 6,
-                TotalAmount = 49.75
+                ReservationId = 6
             },
             new Order()
             {
                 OrderId = 7,
                 EmployeeId = 1,
                 OrderDate = new DateTime(2023, 10, 2, 11, 1, 50, 514, DateTimeKind.Local).AddTicks(5521),
-                ReservationId = 7,
-                TotalAmount = 64.48
+                ReservationId = 7
             }
         };
         modelBuilder.Entity<Order>().HasData(orders);

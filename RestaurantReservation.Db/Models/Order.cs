@@ -1,4 +1,6 @@
-﻿namespace RestaurantReservation.Db.Models;
+﻿using EntityFrameworkCore.Projectables;
+
+namespace RestaurantReservation.Db.Models;
 
 public class Order
 {
@@ -8,6 +10,7 @@ public class Order
     public Employee Employee { get; set; }
     public int EmployeeId { get; set; }
     public DateTime OrderDate { get; set; }
-    public Double TotalAmount { get; set; }
     public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+
+    [Projectable] public Double TotalAmount => OrderItems.Sum(orderItem => orderItem.Quantity * orderItem.Item.Price);
 }

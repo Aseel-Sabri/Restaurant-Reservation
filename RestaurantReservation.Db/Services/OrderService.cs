@@ -99,23 +99,19 @@ public class OrderService : IOrderService
 
     public Result<int> CreateOrderItem(OrderItemDto orderItemDto)
     {
-        var menuItem = _menuItemRepository.FindItemById(orderItemDto.MenuItemId);
-        if (menuItem is null)
+        if (!_menuItemRepository.HasItemById(orderItemDto.MenuItemId))
             return Result.Fail($"No Menu Item With ID {orderItemDto.MenuItemId} Exists");
 
-        var order = _orderRepository.FindOrderById(orderItemDto.OrderId);
-        if (order is null)
+        if (!_orderRepository.HasOrderById(orderItemDto.OrderId))
             return Result.Fail($"No Order With ID {orderItemDto.OrderId} Exists");
 
 
         var orderItem = new OrderItem()
         {
-            Order = order,
+            OrderId = orderItemDto.OrderId,
             MenuItemId = orderItemDto.MenuItemId,
             Quantity = orderItemDto.Quantity
         };
-
-        order.TotalAmount += menuItem.Price * orderItem.Quantity;
 
         var itemId = _orderRepository.CreateOrderItem(orderItem);
         return Result.Ok(itemId);
@@ -127,13 +123,7 @@ public class OrderService : IOrderService
         if (orderItem is null)
             return Result.Fail($"No OrderItem with ID {orderItemId} Exists");
 
-        orderItem.Order = _orderRepository.FindOrderById(orderItem.OrderId)!;
-        orderItem.Item = _menuItemRepository.FindItemById(orderItem.MenuItemId)!;
-
-        orderItem.Order.TotalAmount = quantity * orderItem.Item.Price;
         orderItem.Quantity = quantity;
-
-
         var updatedOrderItem = _orderRepository.UpdateOrderItem(orderItem);
         return Result.Ok(MapToOrderItemDto(updatedOrderItem));
     }
@@ -144,11 +134,6 @@ public class OrderService : IOrderService
 
         if (orderItem is null)
             return Result.Fail($"No Order Item With ID {orderItemId} Exists");
-
-        orderItem.Order = _orderRepository.FindOrderById(orderItem.OrderId)!;
-        orderItem.Item = _menuItemRepository.FindItemById(orderItem.MenuItemId)!;
-
-        orderItem.Order.TotalAmount -= orderItem.Quantity * orderItem.Item.Price;
 
         return Result.OkIf(_orderRepository.DeleteOrderItem(orderItemId),
             $"Could Not Delete Order Item With ID {orderItemId}");
