@@ -1,5 +1,6 @@
-﻿using FluentResults;
+﻿using AutoMapper;
 using RestaurantReservation.Db.DTOs;
+using RestaurantReservation.Db.Exceptions;
 using RestaurantReservation.Db.Models;
 using RestaurantReservation.Db.Repositories;
 
@@ -8,79 +9,68 @@ namespace RestaurantReservation.Db.Services;
 public class CustomerService : ICustomerService
 {
     private readonly ICustomerRepository _customerRepository;
+    private readonly IMapper _mapper;
 
-    public CustomerService(ICustomerRepository customerRepository)
+    public CustomerService(ICustomerRepository customerRepository, IMapper mapper)
     {
         _customerRepository = customerRepository;
+        _mapper = mapper;
     }
 
-    public async Task<Result<int>> CreateCustomer(CustomerDto customerDto)
+    public async Task<int> CreateCustomer(ModifyCustomerDto customerDto)
     {
-        if (customerDto.HasAnyNullOrEmptyFields())
-        {
-            return Result.Fail($"All Customer Fields Must Be Provided");
-        }
-
-        var customer = new Customer()
-        {
-            FirstName = customerDto.FirstName,
-            LastName = customerDto.LastName,
-            Email = customerDto.Email,
-            PhoneNumber = customerDto.PhoneNumber
-        };
+        var customer = _mapper.Map<Customer>(customerDto);
         var customerId = await _customerRepository.CreateCustomer(customer);
-        return Result.Ok(customerId);
+        return customerId;
     }
 
-    public async Task<Result<CustomerDto>> UpdateCustomer(CustomerDto customerDto)
+    public async Task<CustomerDto> UpdateCustomer(int customerId, ModifyCustomerDto customerDto)
     {
-        var customer = await _customerRepository.FindCustomerById(customerDto.CustomerId);
+        var customer = await _customerRepository.FindCustomerById(customerId);
         if (customer is null)
-            return Result.Fail($"No Customer with ID {customerDto.CustomerId} Exists");
+            throw new NotFoundException($"No Customer with ID {customerId} Exists");
 
-        // TODO: Check for empty strings
-        customer.FirstName = customerDto.FirstName ?? customer.FirstName;
-        customer.LastName = customerDto.LastName ?? customer.LastName;
-        customer.Email = customerDto.Email ?? customer.Email;
-        customer.PhoneNumber = customerDto.PhoneNumber ?? customer.PhoneNumber;
+        _mapper.Map(customerDto, customer);
 
         var updatedCustomer = await _customerRepository.UpdateCustomer(customer);
-        return Result.Ok(MapToCustomerDto(updatedCustomer));
+        return _mapper.Map<CustomerDto>(updatedCustomer);
     }
 
-    public async Task<Result> DeleteCustomer(int customerId)
+    public async Task DeleteCustomer(int customerId)
     {
         if (!await _customerRepository.HasCustomerById(customerId))
-            return Result.Fail($"No Customer With ID {customerId} Exists");
+            throw new NotFoundException($"No Customer With ID {customerId} Exists");
 
         try
         {
-            return Result.OkIf(await _customerRepository.DeleteCustomer(customerId),
-                $"Could Not Delete Customer With ID {customerId}");
+            if (!await _customerRepository.DeleteCustomer(customerId))
+                throw new DeleteException($"Could Not Delete Customer With ID {customerId}");
         }
         catch (Exception e)
         {
-            return Result.Fail(
-                $"Could Not Delete Customer With ID {customerId}, It May Have Related Data");
+            throw new DeleteException(
+                $"Could Not Delete Customer With ID {customerId}, It May Have Related Data", e);
         }
     }
 
-    public async Task<List<CustomerDto>> FindCustomersWithPartySizeGreaterThan(int partySize)
+    public async Task<IEnumerable<CustomerDto>> FindCustomersWithPartySizeGreaterThan(int partySize)
     {
-        return (await _customerRepository.FindCustomersWithPartySizeGreaterThan(partySize))
-            .Select(MapToCustomerDto)
-            .ToList();
+        var customers = await _customerRepository.FindCustomersWithPartySizeGreaterThan(partySize);
+        return _mapper.Map<IEnumerable<CustomerDto>>(customers);
     }
 
-    private CustomerDto MapToCustomerDto(Customer customer)
+    public async Task<IEnumerable<CustomerDto>> GetAllCustomers()
     {
-        return new CustomerDto()
-        {
-            CustomerId = customer.CustomerId,
-            FirstName = customer.FirstName,
-            LastName = customer.LastName,
-            Email = customer.Email,
-            PhoneNumber = customer.PhoneNumber
-        };
+        var customers = await _customerRepository.GetAllCustomers();
+        return _mapper.Map<IEnumerable<CustomerDto>>(customers);
+    }
+
+    public async Task<CustomerDto> FindCustomerById(int customerId)
+    {
+        var customer = await _customerRepository.FindCustomerById(customerId);
+        if (customer is null)
+            throw new NotFoundException($"No Customer with ID {customerId} Exists");
+
+        return _mapper.Map<CustomerDto>(customer);
     }
 }

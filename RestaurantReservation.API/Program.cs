@@ -24,7 +24,7 @@ builder.Services
     .AddFluentValidationAutoValidation(configuration =>
         configuration.OverrideDefaultResultFactoryWith<ValidationResultFactory>())
     .AddFluentValidationClientsideAdapters();
-builder.Services.AddValidatorsFromAssemblyContaining<UpdateEmployeeValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<ModifyEmployeeValidator>();
 
 
 var connectionString = builder.Configuration.GetConnectionString("Default");
@@ -35,7 +35,7 @@ builder.Services.AddDbContext<RestaurantReservationDbContext>(options =>
 });
 
 builder.Services
-    // .AddSingleton<ICustomerRepository, CustomerRepository>()
+    .AddScoped<ICustomerRepository, CustomerRepository>()
     .AddScoped<IRestaurantRepository, RestaurantRepository>()
     .AddScoped<IEmployeeRepository, EmployeeRepository>()
     // .AddSingleton<ITableRepository, TableRepository>()
@@ -44,7 +44,7 @@ builder.Services
     // .AddSingleton<IMenuItemRepository, MenuItemRepository>();
     ;
 builder.Services
-// .AddSingleton<ICustomerService, CustomerService>()
+    .AddScoped<ICustomerService, CustomerService>()
 // .AddSingleton<IRestaurantService, RestaurantService>()
     .AddScoped<IEmployeeService, EmployeeService>()
 // .AddSingleton<ITableService, TableService>()

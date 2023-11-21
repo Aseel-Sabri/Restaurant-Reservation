@@ -10,4 +10,5 @@ public interface ICustomerRepository
     Task<Customer?> FindCustomerById(int customerId);
     Task<bool> HasCustomerById(int customerId);
     Task<List<Customer>> FindCustomersWithPartySizeGreaterThan(int partySize);
+    Task<List<Customer>> GetAllCustomers();
 }

@@ -51,4 +51,9 @@ public class CustomerRepository : ICustomerRepository
     {
         return await FindCustomerById(customerId) is not null;
     }
+
+    public async Task<List<Customer>> GetAllCustomers()
+    {
+        return await _dbContext.Customers.ToListAsync();
+    }
 }
