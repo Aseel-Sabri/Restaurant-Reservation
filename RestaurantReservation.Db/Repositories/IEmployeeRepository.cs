@@ -13,4 +13,5 @@ public interface IEmployeeRepository
     Task<List<Employee>> GetManagers();
     Task<double> CalculateAverageOrderAmount(int employeeId);
     Task<List<EmployeeDetails>> GetEmployeesDetails();
+    Task<List<Employee>> GetAllEmployees();
 }

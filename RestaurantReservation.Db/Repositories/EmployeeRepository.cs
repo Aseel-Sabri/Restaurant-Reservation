@@ -53,6 +53,11 @@ public class EmployeeRepository : IEmployeeRepository
         return await _dbContext.EmployeesDetails.ToListAsync();
     }
 
+    public async Task<List<Employee>> GetAllEmployees()
+    {
+        return await _dbContext.Employees.ToListAsync();
+    }
+
     public async Task<Employee?> FindEmployeeById(int employeeId)
     {
         return await _dbContext.Employees.FindAsync(employeeId);

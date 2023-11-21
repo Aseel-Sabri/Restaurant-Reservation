@@ -1,5 +1,6 @@
-﻿using FluentResults;
+﻿using AutoMapper;
 using RestaurantReservation.Db.DTOs;
+using RestaurantReservation.Db.Exceptions;
 using RestaurantReservation.Db.KeylessEntities;
 using RestaurantReservation.Db.Models;
 using RestaurantReservation.Db.Repositories;
@@ -10,77 +11,63 @@ public class EmployeeService : IEmployeeService
 {
     private readonly IEmployeeRepository _employeeRepository;
     private readonly IRestaurantRepository _restaurantRepository;
+    private readonly IMapper _mapper;
 
-    public EmployeeService(IEmployeeRepository employeeRepository, IRestaurantRepository restaurantRepository)
+    public EmployeeService(IEmployeeRepository employeeRepository, IRestaurantRepository restaurantRepository,
+        IMapper mapper)
     {
         _employeeRepository = employeeRepository;
         _restaurantRepository = restaurantRepository;
+        _mapper = mapper;
     }
 
-    public async Task<Result<int>> CreateEmployee(EmployeeDto employeeDto)
+    public async Task<int> CreateEmployee(ModifyEmployeeDto employeeDto)
     {
-        if (employeeDto.HasAnyNullOrEmptyFields())
-            return Result.Fail($"All Employee Fields Must Be Provided");
+        if (!await _restaurantRepository.HasRestaurantById((int)employeeDto.RestaurantId!))
+            throw new NotFoundException($"No Restaurant with ID {employeeDto.RestaurantId} Exists");
+
+        var employee = _mapper.Map<Employee>(employeeDto);
+
+        var employeeId = await _employeeRepository.CreateEmployee(employee);
+        return employeeId;
+    }
+
+    public async Task<EmployeeDto> UpdateEmployee(int employeeId, ModifyEmployeeDto employeeDto)
+    {
+        var employee = await _employeeRepository.FindEmployeeById(employeeId);
+        if (employee is null)
+            throw new NotFoundException($"No Employee with ID {employeeId} Exists");
+
 
         if (!await _restaurantRepository.HasRestaurantById((int)employeeDto.RestaurantId!))
-            return Result.Fail($"No Restaurant with ID {employeeDto.RestaurantId} Exists");
+            throw new NotFoundException($"No Restaurant with ID {employeeDto.RestaurantId} Exists");
 
-
-        var employee = new Employee()
-        {
-            FirstName = employeeDto.FirstName!,
-            LastName = employeeDto.LastName!,
-            Position = employeeDto.Position!,
-            RestaurantId = (int)employeeDto.RestaurantId
-        };
-        var employeeId = await _employeeRepository.CreateEmployee(employee);
-        return Result.Ok(employeeId);
-    }
-
-    public async Task<Result<EmployeeDto>> UpdateEmployee(EmployeeDto employeeDto)
-    {
-        var employee = await _employeeRepository.FindEmployeeById(employeeDto.EmployeeId);
-        if (employee is null)
-            return Result.Fail($"No Employee with ID {employeeDto.EmployeeId} Exists");
-
-        // TODO: Check for empty strings
-        employee.FirstName = employeeDto.FirstName ?? employee.FirstName;
-        employee.LastName = employeeDto.LastName ?? employee.LastName;
-        employee.Position = employeeDto.Position ?? employee.Position;
-
-        if (employeeDto.RestaurantId is not null)
-        {
-            if (!await _restaurantRepository.HasRestaurantById((int)employeeDto.RestaurantId!))
-                return Result.Fail($"No Restaurant with ID {employeeDto.RestaurantId} Exists");
-
-            employee.RestaurantId = (int)employeeDto.RestaurantId;
-        }
-
+        _mapper.Map(employeeDto, employee);
 
         var updatedEmployee = await _employeeRepository.UpdateEmployee(employee);
-        return Result.Ok(MapToEmployeeDto(updatedEmployee));
+        return _mapper.Map<EmployeeDto>(updatedEmployee);
     }
 
-    public async Task<Result> DeleteEmployee(int employeeId)
+    public async Task DeleteEmployee(int employeeId)
     {
         if (!await _employeeRepository.HasEmployeeById(employeeId))
-            return Result.Fail($"No Employee With ID {employeeId} Exists");
+            throw new NotFoundException($"No Employee With ID {employeeId} Exists");
 
         try
         {
-            return Result.OkIf(await _employeeRepository.DeleteEmployee(employeeId),
-                $"Could Not Delete Employee With ID {employeeId}");
+            if (!await _employeeRepository.DeleteEmployee(employeeId))
+                throw new DeleteException($"Could Not Delete Employee With ID {employeeId}");
         }
         catch (Exception e)
         {
-            return Result.Fail(
-                $"Could Not Delete Employee With ID {employeeId}, It May Have Related Data");
+            throw new DeleteException($"Could Not Delete Employee With ID {employeeId}, It May Have Related Data", e);
         }
     }
 
     public async Task<List<EmployeeDto>> GetManagers()
     {
-        return (await _employeeRepository.GetManagers()).Select(MapToEmployeeDto).ToList();
+        var managers = await _employeeRepository.GetManagers();
+        return _mapper.Map<List<EmployeeDto>>(managers);
     }
 
     public async Task<List<EmployeeDetails>> GetEmployeesDetails()
@@ -88,23 +75,26 @@ public class EmployeeService : IEmployeeService
         return await _employeeRepository.GetEmployeesDetails();
     }
 
-    public async Task<Result<double>> CalculateAverageOrderAmount(int employeeId)
+    public async Task<double> CalculateAverageOrderAmount(int employeeId)
     {
         if (!await _employeeRepository.HasEmployeeById(employeeId))
-            return Result.Fail($"No Employee With ID {employeeId} Exists");
+            throw new NotFoundException($"No Employee With ID {employeeId} Exists");
 
         return await _employeeRepository.CalculateAverageOrderAmount(employeeId);
     }
 
-    private EmployeeDto MapToEmployeeDto(Employee employee)
+    public async Task<EmployeeDto> FindEmployeeById(int employeeId)
     {
-        return new EmployeeDto()
-        {
-            EmployeeId = employee.EmployeeId,
-            FirstName = employee.FirstName,
-            LastName = employee.LastName,
-            Position = employee.Position,
-            RestaurantId = employee.RestaurantId
-        };
+        var employee = await _employeeRepository.FindEmployeeById(employeeId);
+
+        if (employee is null)
+            throw new NotFoundException($"No Employee With ID {employeeId} Exists");
+
+        return _mapper.Map<EmployeeDto>(employee);
+    }
+
+    public async Task<List<Employee>> GetAllEmployees()
+    {
+        return await _employeeRepository.GetAllEmployees();
     }
 }
