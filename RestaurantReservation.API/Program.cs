@@ -1,7 +1,6 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
-using RestaurantReservation.API;
 using RestaurantReservation.API.Filters;
 using RestaurantReservation.API.Validators;
 using RestaurantReservation.Db.DbContext;
@@ -45,7 +44,7 @@ builder.Services
     ;
 builder.Services
     .AddScoped<ICustomerService, CustomerService>()
-// .AddSingleton<IRestaurantService, RestaurantService>()
+    .AddScoped<IRestaurantService, RestaurantService>()
     .AddScoped<IEmployeeService, EmployeeService>()
 // .AddSingleton<ITableService, TableService>()
 // .AddSingleton<IReservationService, ReservationService>()
