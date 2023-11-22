@@ -54,6 +54,11 @@ public class MenuItemRepository : IMenuItemRepository
         return await menuItems.ToListAsync();
     }
 
+    public async Task<List<MenuItem>> GetAllMenuItems()
+    {
+        return await _dbContext.MenuItems.ToListAsync();
+    }
+
     public async Task<MenuItem?> FindItemById(int itemId)
     {
         return await _dbContext.MenuItems.FindAsync(itemId);

@@ -37,19 +37,20 @@ builder.Services
     .AddScoped<ICustomerRepository, CustomerRepository>()
     .AddScoped<IRestaurantRepository, RestaurantRepository>()
     .AddScoped<IEmployeeRepository, EmployeeRepository>()
+    .AddScoped<IMenuItemRepository, MenuItemRepository>()
     // .AddSingleton<ITableRepository, TableRepository>()
     // .AddSingleton<IReservationRepository, ReservationRepository>()
     // .AddSingleton<IOrderRepository, OrderRepository>()
-    // .AddSingleton<IMenuItemRepository, MenuItemRepository>();
     ;
+
 builder.Services
     .AddScoped<ICustomerService, CustomerService>()
     .AddScoped<IRestaurantService, RestaurantService>()
     .AddScoped<IEmployeeService, EmployeeService>()
+    .AddScoped<IMenuItemService, MenuItemService>()
 // .AddSingleton<ITableService, TableService>()
 // .AddSingleton<IReservationService, ReservationService>()
 // .AddSingleton<IOrderService, OrderService>()
-// .AddSingleton<IMenuItemService, MenuItemService>();
     ;
 
 
