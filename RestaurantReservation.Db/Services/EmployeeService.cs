@@ -56,11 +56,11 @@ public class EmployeeService : IEmployeeService
         try
         {
             if (!await _employeeRepository.DeleteEmployee(employeeId))
-                throw new DeleteException($"Could Not Delete Employee With ID {employeeId}");
+                throw new ApiException($"Could Not Delete Employee With ID {employeeId}");
         }
         catch (Exception e)
         {
-            throw new DeleteException($"Could Not Delete Employee With ID {employeeId}, It May Have Related Data", e);
+            throw new ApiException($"Could Not Delete Employee With ID {employeeId}, It May Have Related Data", e);
         }
     }
 

@@ -44,11 +44,11 @@ public class RestaurantService : IRestaurantService
         try
         {
             if (!await _restaurantRepository.DeleteRestaurant(restaurantId))
-                throw new DeleteException($"Could Not Delete Restaurant With ID {restaurantId}");
+                throw new ApiException($"Could Not Delete Restaurant With ID {restaurantId}");
         }
         catch (Exception e)
         {
-            throw new DeleteException(
+            throw new ApiException(
                 $"Could Not Delete Restaurant With ID {restaurantId}, It May Have Related Data", e);
         }
     }

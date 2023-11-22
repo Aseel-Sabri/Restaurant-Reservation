@@ -52,11 +52,11 @@ public class MenuItemService : IMenuItemService
         try
         {
             if (!await _menuItemRepository.DeleteItem(menuItemId))
-                throw new DeleteException($"Could Not Delete MenuItem With ID {menuItemId}");
+                throw new ApiException($"Could Not Delete MenuItem With ID {menuItemId}");
         }
         catch (Exception e)
         {
-            throw new DeleteException($"Could Not Delete MenuItem With ID {menuItemId}, It May Have Related Data", e);
+            throw new ApiException($"Could Not Delete MenuItem With ID {menuItemId}, It May Have Related Data", e);
         }
     }
 

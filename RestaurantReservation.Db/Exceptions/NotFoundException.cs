@@ -1,8 +1,11 @@
-﻿namespace RestaurantReservation.Db.Exceptions;
+﻿using System.Net;
 
-public class NotFoundException : Exception
+namespace RestaurantReservation.Db.Exceptions;
+
+public class NotFoundException : ApiException
 {
     public NotFoundException(string? message) : base(message)
     {
+        HttpStatusCode = HttpStatusCode.NotFound;
     }
 }

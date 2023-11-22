@@ -24,14 +24,9 @@ public class GlobalExceptionFilter : IExceptionFilter
 
         switch (exception)
         {
-            case NotFoundException:
-                message = exception.Message;
-                statusCode = (int)HttpStatusCode.NotFound;
-                context.ExceptionHandled = true;
-                break;
-            case DeleteException:
-                message = exception.Message;
-                statusCode = (int)HttpStatusCode.InternalServerError;
+            case ApiException apiException:
+                message = apiException.Message;
+                statusCode = (int)apiException.HttpStatusCode;
                 context.ExceptionHandled = true;
                 break;
             default:

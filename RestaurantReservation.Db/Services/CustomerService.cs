@@ -44,11 +44,11 @@ public class CustomerService : ICustomerService
         try
         {
             if (!await _customerRepository.DeleteCustomer(customerId))
-                throw new DeleteException($"Could Not Delete Customer With ID {customerId}");
+                throw new ApiException($"Could Not Delete Customer With ID {customerId}");
         }
         catch (Exception e)
         {
-            throw new DeleteException(
+            throw new ApiException(
                 $"Could Not Delete Customer With ID {customerId}, It May Have Related Data", e);
         }
     }
