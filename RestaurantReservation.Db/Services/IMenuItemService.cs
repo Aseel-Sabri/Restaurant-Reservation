@@ -9,4 +9,5 @@ public interface IMenuItemService
     Task DeleteItem(int menuItemId);
     Task<IEnumerable<MenuItemDto>> GetAllItems();
     Task<MenuItemDto> FindItemById(int menuItemId);
+    Task<IEnumerable<MenuItemDto>> ListOrderedMenuItems(int reservationId);
 }

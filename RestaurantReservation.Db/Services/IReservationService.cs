@@ -1,14 +1,15 @@
-﻿using FluentResults;
-using RestaurantReservation.Db.DTOs;
-using RestaurantReservation.Db.KeylessEntities;
+﻿using RestaurantReservation.Db.DTOs;
+using RestaurantReservation.Db.ValueObjects;
 
 namespace RestaurantReservation.Db.Services;
 
 public interface IReservationService
 {
-    Task<Result<int>> CreateReservation(ReservationDto reservationDto);
-    Task<Result<ReservationDto>> UpdateReservation(ReservationDto reservationDto);
-    Task<Result> DeleteReservation(int reservationId);
-    Task<Result<List<ReservationDto>>> GetReservationsByCustomer(int customerId);
-    Task<List<ReservationDetails>> GetReservationsWithCustomerAndRestaurantDetails();
+    Task<int> CreateReservation(ModifyReservationDto reservationDto);
+    Task<ReservationDto> UpdateReservation(int reservationId, ModifyReservationDto reservationDto);
+    Task DeleteReservation(int reservationId);
+    Task<IEnumerable<ReservationDto>> GetReservationsByCustomer(int customerId);
+    Task<IEnumerable<ReservationDetails>> GetReservationsWithCustomerAndRestaurantDetails();
+    Task<IEnumerable<ReservationDto>> GetAllReservations();
+    Task<ReservationDto> FindReservationById(int reservationId);
 }

@@ -10,14 +10,16 @@ public class MenuItemService : IMenuItemService
 {
     private readonly IMenuItemRepository _menuItemRepository;
     private readonly IRestaurantRepository _restaurantRepository;
+    private readonly IReservationRepository _reservationRepository;
     private readonly IMapper _mapper;
 
     public MenuItemService(IMenuItemRepository menuItemRepository, IRestaurantRepository restaurantRepository,
-        IMapper mapper)
+        IMapper mapper, IReservationRepository reservationRepository)
     {
         _menuItemRepository = menuItemRepository;
         _restaurantRepository = restaurantRepository;
         _mapper = mapper;
+        _reservationRepository = reservationRepository;
     }
 
     public async Task<int> CreateItem(CreateMenuItemDto menuItemDto)
@@ -73,5 +75,13 @@ public class MenuItemService : IMenuItemService
             throw new NotFoundException($"No Menu Item With ID {menuItemId} Exists");
 
         return _mapper.Map<MenuItemDto>(item);
+    }
+
+    public async Task<IEnumerable<MenuItemDto>> ListOrderedMenuItems(int reservationId)
+    {
+        if (!await _reservationRepository.HasReservationById(reservationId))
+            throw new NotFoundException($"No Reservation With ID {reservationId} Exists");
+        var items = await _menuItemRepository.ListOrderedMenuItems(reservationId);
+        return _mapper.Map<IEnumerable<MenuItemDto>>(items);
     }
 }
