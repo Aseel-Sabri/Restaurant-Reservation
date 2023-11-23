@@ -28,14 +28,14 @@ public class TableController : ControllerBase
     }
 
     [HttpDelete("{tableId:int}")]
-    public async Task<ActionResult> DeleteTableReservation(int tableId)
+    public async Task<ActionResult> DeleteTable(int tableId)
     {
         await _tableService.DeleteTable(tableId);
         return NoContent();
     }
 
     [HttpPut("{tableId:int}")]
-    public async Task<ActionResult<ReservationDto>> UpdateTable(int tableId, UpdateTableDto tableDto)
+    public async Task<ActionResult<TableDto>> UpdateTable(int tableId, UpdateTableDto tableDto)
     {
         return Ok(await _tableService.UpdateTable(tableId, tableDto));
     }

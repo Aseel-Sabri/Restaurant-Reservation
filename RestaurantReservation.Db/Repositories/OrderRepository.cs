@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RestaurantReservation.Db.DbContext;
 using RestaurantReservation.Db.DTOs;
-using RestaurantReservation.Db.DTOs.DTOs;
 using RestaurantReservation.Db.Models;
 using RestaurantReservation.Db.ValueObjects;
 
@@ -37,7 +36,6 @@ public class OrderRepository : IOrderRepository
         return await _dbContext.SaveChangesAsync() > 0;
     }
 
-    // TODO
     public async Task<List<OrdersAndMenuItems>> ListOrdersAndMenuItems(int reservationId)
     {
         return await _dbContext.Orders

@@ -1,5 +1,4 @@
-﻿using FluentResults;
-using RestaurantReservation.Db.DTOs;
+﻿using RestaurantReservation.Db.DTOs;
 
 namespace RestaurantReservation.Db.Services;
 

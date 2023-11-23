@@ -18,6 +18,6 @@ public class ModifyCustomerValidator : AbstractValidator<ModifyCustomerDto>
         RuleFor(customer => customer.PhoneNumber)
             .NotEmpty()
             .Matches(@"^[\d\s-]+$")
-            .WithMessage("PhoneNumber should only consist of digits, hyphen, and spaces");
+            .WithMessage("'PhoneNumber' should only consist of digits, hyphen, and spaces");
     }
 }

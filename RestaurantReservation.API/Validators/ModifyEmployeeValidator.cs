@@ -15,10 +15,8 @@ public class ModifyEmployeeValidator : AbstractValidator<ModifyEmployeeDto>
 
         RuleFor(employeeDto => employeeDto.RestaurantId)
             .NotNull();
-            // .ExclusiveBetween(1, 4);
 
         RuleFor(employeeDto => employeeDto.Position)
             .NotNull();
-            // .IsInEnum()
     }
 }

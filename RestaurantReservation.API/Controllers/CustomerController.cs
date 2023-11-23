@@ -21,27 +21,27 @@ public class CustomerController : ControllerBase
         return Ok(await _customerService.GetAllCustomers());
     }
 
-    [HttpGet("{customerId}")]
+    [HttpGet("{customerId:int}")]
     public async Task<ActionResult<CustomerDto>> GetCustomer(int customerId)
     {
         return Ok(await _customerService.FindCustomerById(customerId));
     }
 
-    [HttpDelete("{customerId}")]
+    [HttpDelete("{customerId:int}")]
     public async Task<ActionResult> DeleteCustomer(int customerId)
     {
         await _customerService.DeleteCustomer(customerId);
         return NoContent();
     }
 
-    [HttpPut("{customerId}")]
-    public async Task<ActionResult<EmployeeDto>> UpdateCustomer(int customerId, ModifyCustomerDto customerDto)
+    [HttpPut("{customerId:int}")]
+    public async Task<ActionResult<CustomerDto>> UpdateCustomer(int customerId, ModifyCustomerDto customerDto)
     {
         return Ok(await _customerService.UpdateCustomer(customerId, customerDto));
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateEmployee(ModifyCustomerDto customerDto)
+    public async Task<ActionResult> CreateCustomer(ModifyCustomerDto customerDto)
     {
         var customerId = await _customerService.CreateCustomer(customerDto);
         return Ok(new { CreatedCustomerId = customerId });

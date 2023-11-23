@@ -21,20 +21,20 @@ public class MenuItemController : ControllerBase
         return Ok(await _menuItemService.GetAllItems());
     }
 
-    [HttpGet("{menuItemId}")]
+    [HttpGet("{menuItemId:int}")]
     public async Task<ActionResult<MenuItemDto>> GetMenuItem(int menuItemId)
     {
         return Ok(await _menuItemService.FindItemById(menuItemId));
     }
 
-    [HttpDelete("{menuItemId}")]
+    [HttpDelete("{menuItemId:int}")]
     public async Task<ActionResult> DeleteMenuItem(int menuItemId)
     {
         await _menuItemService.DeleteItem(menuItemId);
         return NoContent();
     }
 
-    [HttpPut("{menuItemId}")]
+    [HttpPut("{menuItemId:int}")]
     public async Task<ActionResult<MenuItemDto>> UpdateMenuItem(int menuItemId, UpdateMenuItemDto menuItemDto)
     {
         return Ok(await _menuItemService.UpdateItem(menuItemId, menuItemDto));

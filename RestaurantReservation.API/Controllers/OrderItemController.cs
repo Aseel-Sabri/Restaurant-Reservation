@@ -35,7 +35,7 @@ public class OrderItemController : ControllerBase
     }
 
     [HttpPut("{orderItemId:int}")]
-    public async Task<ActionResult<ReservationDto>> UpdateOrderItem(int orderId, int orderItemId,
+    public async Task<ActionResult<OrderItemDto>> UpdateOrderItem(int orderId, int orderItemId,
         UpdateOrderItemDto orderItemDto)
     {
         return Ok(await _orderService.UpdateOrderItem(orderId, orderItemId, orderItemDto));

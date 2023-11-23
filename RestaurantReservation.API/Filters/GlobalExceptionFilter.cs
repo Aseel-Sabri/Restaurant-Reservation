@@ -19,14 +19,14 @@ public class GlobalExceptionFilter : IExceptionFilter
         if (context.ExceptionHandled) return;
 
         var exception = context.Exception;
-        var message = "Internal Server Error";
-        var statusCode = (int)HttpStatusCode.InternalServerError;
+        string? message = null;
+        var statusCode = HttpStatusCode.InternalServerError;
 
         switch (exception)
         {
             case ApiException apiException:
                 message = apiException.Message;
-                statusCode = (int)apiException.HttpStatusCode;
+                statusCode = apiException.HttpStatusCode;
                 context.ExceptionHandled = true;
                 break;
             default:
@@ -35,14 +35,16 @@ public class GlobalExceptionFilter : IExceptionFilter
                 break;
         }
 
-        context.Result = new ObjectResult(new
+        var problemDetails = new ProblemDetails()
         {
-            Status = statusCode,
-            Title = "Error",
-            Message = message
-        })
+            Status = (int)statusCode,
+            Title = statusCode.ToString(),
+            Detail = message
+        };
+
+        context.Result = new ObjectResult(problemDetails)
         {
-            StatusCode = statusCode
+            StatusCode = (int)statusCode
         };
     }
 }

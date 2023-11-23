@@ -21,23 +21,23 @@ public class EmployeeController : ControllerBase
         return Ok(await _employeeService.GetAllEmployees());
     }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<EmployeeDto>> GetEmployee(int id)
+    [HttpGet("{employeeId:int}")]
+    public async Task<ActionResult<EmployeeDto>> GetEmployee(int employeeId)
     {
-        return Ok(await _employeeService.FindEmployeeById(id));
+        return Ok(await _employeeService.FindEmployeeById(employeeId));
     }
 
-    [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteEmployee(int id)
+    [HttpDelete("{employeeId:int}")]
+    public async Task<ActionResult> DeleteEmployee(int employeeId)
     {
-        await _employeeService.DeleteEmployee(id);
+        await _employeeService.DeleteEmployee(employeeId);
         return NoContent();
     }
 
-    [HttpPut("{id}")]
-    public async Task<ActionResult<EmployeeDto>> UpdateEmployee(int id, ModifyEmployeeDto employeeDto)
+    [HttpPut("{employeeId:int}")]
+    public async Task<ActionResult<EmployeeDto>> UpdateEmployee(int employeeId, ModifyEmployeeDto employeeDto)
     {
-        return Ok(await _employeeService.UpdateEmployee(id, employeeDto));
+        return Ok(await _employeeService.UpdateEmployee(employeeId, employeeDto));
     }
 
     [HttpGet("managers")]
