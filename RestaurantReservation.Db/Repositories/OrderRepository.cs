@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RestaurantReservation.Db.DbContext;
 using RestaurantReservation.Db.DTOs;
+using RestaurantReservation.Db.DTOs.DTOs;
 using RestaurantReservation.Db.Models;
+using RestaurantReservation.Db.ValueObjects;
 
 namespace RestaurantReservation.Db.Repositories;
 
@@ -36,12 +38,12 @@ public class OrderRepository : IOrderRepository
     }
 
     // TODO
-    public async Task<List<OrdersAndMenuItemsDto>> ListOrdersAndMenuItems(int reservationId)
+    public async Task<List<OrdersAndMenuItems>> ListOrdersAndMenuItems(int reservationId)
     {
         return await _dbContext.Orders
             .Where(order => order.ReservationId == reservationId)
             .Select(order =>
-                new OrdersAndMenuItemsDto()
+                new OrdersAndMenuItems()
                 {
                     EmployeeId = order.EmployeeId,
                     OrderDate = order.OrderDate,
@@ -63,8 +65,18 @@ public class OrderRepository : IOrderRepository
             .ToListAsync();
     }
 
+    public async Task<List<Order>> GetAllOrders() => await _dbContext.Orders.ToListAsync();
+
+    public async Task<List<OrderItem>> GetOrderItems(int orderId)
+    {
+        return await _dbContext.OrderItems.Where(item => item.OrderId == orderId).ToListAsync();
+    }
+
+
     public async Task<Order?> FindOrderById(int orderId)
     {
+        var order = _dbContext.Orders.Where(order => order.OrderId == orderId)
+            ;
         return await _dbContext.Orders.FindAsync(orderId);
     }
 
@@ -104,8 +116,15 @@ public class OrderRepository : IOrderRepository
         return await _dbContext.OrderItems.FindAsync(orderItemId);
     }
 
-    public async Task<bool> HasOrderItemById(int orderItemId)
+    public async Task<bool> HasOrderItemById(int orderId, int orderItemId)
     {
-        return await FindOrderItemById(orderItemId) is not null;
+        return await _dbContext.OrderItems.AnyAsync(orderItem =>
+            orderItem.OrderItemId == orderItemId && orderItem.OrderId == orderId);
+    }
+
+    public async Task<double> GetOrderTotalAmount(int orderId)
+    {
+        return await _dbContext.Orders.Where(order => order.OrderId == orderId).Select(order => order.TotalAmount)
+            .FirstOrDefaultAsync();
     }
 }

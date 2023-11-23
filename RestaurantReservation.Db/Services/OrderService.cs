@@ -1,7 +1,9 @@
-﻿using FluentResults;
+﻿using AutoMapper;
 using RestaurantReservation.Db.DTOs;
+using RestaurantReservation.Db.Exceptions;
 using RestaurantReservation.Db.Models;
 using RestaurantReservation.Db.Repositories;
+using RestaurantReservation.Db.ValueObjects;
 
 namespace RestaurantReservation.Db.Services;
 
@@ -11,153 +13,134 @@ public class OrderService : IOrderService
     private readonly IMenuItemRepository _menuItemRepository;
     private readonly IReservationRepository _reservationRepository;
     private readonly IEmployeeRepository _employeeRepository;
+    private readonly IMapper _mapper;
 
     public OrderService(IOrderRepository orderRepository, IMenuItemRepository menuItemRepository,
-        IReservationRepository reservationRepository, IEmployeeRepository employeeRepository)
+        IReservationRepository reservationRepository, IEmployeeRepository employeeRepository, IMapper mapper)
     {
         _orderRepository = orderRepository;
         _menuItemRepository = menuItemRepository;
         _reservationRepository = reservationRepository;
         _employeeRepository = employeeRepository;
+        _mapper = mapper;
     }
 
-    public async Task<Result<int>> CreateOrder(OrderDto orderDto)
+    public async Task<int> CreateOrder(ModifyOrderDto orderDto)
     {
-        if (orderDto.HasAnyNullOrEmptyFields())
-            return Result.Fail($"All Order Fields Must Be Provided");
-
         if (!await _employeeRepository.HasEmployeeById((int)orderDto.EmployeeId!))
-            return Result.Fail($"No Employee With ID {orderDto.EmployeeId} Exists");
+            throw new NotFoundException($"No Employee With ID {orderDto.EmployeeId} Exists");
 
         if (!await _reservationRepository.HasReservationById((int)orderDto.ReservationId!))
-            return Result.Fail($"No Reservation With ID {orderDto.ReservationId} Exists");
+            throw new NotFoundException($"No Reservation With ID {orderDto.ReservationId} Exists");
 
         // Should I check if both employee and reservation belong to the same restaurant? 
 
-        var order = new Order()
-        {
-            EmployeeId = (int)orderDto.EmployeeId,
-            ReservationId = (int)orderDto.ReservationId,
-            OrderDate = (DateTime)orderDto.OrderDate!,
-        };
+        var order = _mapper.Map<Order>(orderDto);
+        order.OrderDate = DateTime.Now;
 
         var orderId = await _orderRepository.CreateOrder(order);
-        return Result.Ok(orderId);
+        return orderId;
     }
 
-    public async Task<Result<OrderDto>> UpdateOrder(OrderDto orderDto)
+    public async Task<OrderDto> UpdateOrder(int orderId, ModifyOrderDto orderDto)
     {
-        var order = await _orderRepository.FindOrderById(orderDto.OrderId);
+        var order = await _orderRepository.FindOrderById(orderId);
         if (order is null)
-            return Result.Fail($"No Order with ID {orderDto.OrderId} Exists");
+            throw new NotFoundException($"No Order with ID {orderId} Exists");
 
-        if (orderDto.ReservationId is not null)
-        {
-            if (!await _reservationRepository.HasReservationById((int)orderDto.ReservationId))
-                return Result.Fail($"No Reservation with ID {orderDto.ReservationId} Exists");
+        if (!await _reservationRepository.HasReservationById((int)orderDto.ReservationId!))
+            throw new NotFoundException($"No Reservation with ID {orderDto.ReservationId} Exists");
 
-            order.ReservationId = (int)orderDto.ReservationId;
-        }
+        if (!await _employeeRepository.HasEmployeeById((int)orderDto.EmployeeId!))
+            throw new NotFoundException($"No Employee with ID {orderDto.EmployeeId} Exists");
 
-        if (orderDto.EmployeeId is not null)
-        {
-            if (!await _employeeRepository.HasEmployeeById((int)orderDto.EmployeeId))
-                return Result.Fail($"No Employee with ID {orderDto.EmployeeId} Exists");
-
-            order.EmployeeId = (int)orderDto.EmployeeId;
-        }
-
-        order.OrderDate = orderDto.OrderDate ?? order.OrderDate;
+        _mapper.Map(orderDto, order);
 
         var updatedOrder = await _orderRepository.UpdateOrder(order);
-        return Result.Ok(MapToOrderDto(updatedOrder));
+        return _mapper.Map<OrderDto>(updatedOrder);
     }
 
-    public async Task<Result> DeleteOrder(int orderId)
+    public async Task DeleteOrder(int orderId)
     {
         if (!await _orderRepository.HasOrderById(orderId))
-            return Result.Fail($"No Order With ID {orderId} Exists");
+            throw new NotFoundException($"No Order With ID {orderId} Exists");
 
-        var errorMessage = $"Could Not Delete Order With ID {orderId}";
-        try
-        {
-            return Result.OkIf(await _orderRepository.DeleteOrder(orderId), errorMessage);
-        }
-        catch (Exception e)
-        {
-            return Result.Fail(errorMessage);
-        }
+        if (!await _orderRepository.DeleteOrder(orderId))
+            throw new ApiException($"Could Not Delete Order With ID {orderId} Exists");
     }
 
-    public async Task<Result<List<OrdersAndMenuItemsDto>>> ListOrdersAndMenuItems(int reservationId)
+    public async Task<List<OrdersAndMenuItems>> ListOrdersAndMenuItems(int reservationId)
     {
         if (!await _reservationRepository.HasReservationById(reservationId))
-            return Result.Fail($"No Reservation With ID {reservationId} Exists");
+            throw new NotFoundException($"No Reservation With ID {reservationId} Exists");
 
         return await _orderRepository.ListOrdersAndMenuItems(reservationId);
     }
 
-    public async Task<Result<int>> CreateOrderItem(OrderItemDto orderItemDto)
+    public async Task<int> CreateOrderItem(int orderId, CreateOrderItemDto orderItemDto)
     {
-        if (!await _menuItemRepository.HasItemById(orderItemDto.MenuItemId))
-            return Result.Fail($"No Menu Item With ID {orderItemDto.MenuItemId} Exists");
+        if (!await _orderRepository.HasOrderById(orderId))
+            throw new NotFoundException($"No Order With ID {orderId} Exists");
 
-        if (!await _orderRepository.HasOrderById(orderItemDto.OrderId))
-            return Result.Fail($"No Order With ID {orderItemDto.OrderId} Exists");
+        if (!await _menuItemRepository.HasItemById((int)orderItemDto.MenuItemId))
+            throw new NotFoundException($"No Menu Item With ID {orderItemDto.MenuItemId} Exists");
 
-
-        var orderItem = new OrderItem()
-        {
-            OrderId = orderItemDto.OrderId,
-            MenuItemId = orderItemDto.MenuItemId,
-            Quantity = orderItemDto.Quantity
-        };
+        var orderItem = _mapper.Map<OrderItem>(orderItemDto);
+        orderItem.OrderId = orderId;
 
         var itemId = await _orderRepository.CreateOrderItem(orderItem);
-        return Result.Ok(itemId);
+        return itemId;
     }
 
-    public async Task<Result<OrderItemDto>> UpdateOrderItemQuantity(int orderItemId, int quantity)
+    public async Task<OrderItemDto> UpdateOrderItem(int orderId, int orderItemId, UpdateOrderItemDto orderItemDto)
     {
-        var orderItem = await _orderRepository.FindOrderItemById(orderItemId).ConfigureAwait(false);
-        if (orderItem is null)
-            return Result.Fail($"No OrderItem with ID {orderItemId} Exists");
+        if (!await _orderRepository.HasOrderItemById(orderId, orderItemId))
+            throw new NotFoundException($"No OrderItem with ID {orderItemId} Exists For Order {orderId}");
 
-        orderItem.Quantity = quantity;
-        var updatedOrderItem = await _orderRepository.UpdateOrderItem(orderItem);
-        return Result.Ok(MapToOrderItemDto(updatedOrderItem));
-    }
-
-    public async Task<Result> DeleteOrderItem(int orderItemId)
-    {
         var orderItem = await _orderRepository.FindOrderItemById(orderItemId);
 
-        if (orderItem is null)
-            return Result.Fail($"No Order Item With ID {orderItemId} Exists");
-
-        return Result.OkIf(await _orderRepository.DeleteOrderItem(orderItemId),
-            $"Could Not Delete Order Item With ID {orderItemId}");
+        _mapper.Map(orderItemDto, orderItem);
+        var updatedOrderItem = await _orderRepository.UpdateOrderItem(orderItem!);
+        return _mapper.Map<OrderItemDto>(updatedOrderItem);
     }
 
-    private OrderItemDto MapToOrderItemDto(OrderItem orderItem)
+    public async Task DeleteOrderItem(int orderId, int orderItemId)
     {
-        return new OrderItemDto()
-        {
-            OrderItemId = orderItem.OrderItemId,
-            OrderId = orderItem.OrderId,
-            MenuItemId = orderItem.MenuItemId,
-            Quantity = orderItem.Quantity
-        };
+        if (!await _orderRepository.HasOrderItemById(orderId, orderItemId))
+            throw new NotFoundException($"No OrderItem with ID {orderItemId} Exists For Order {orderId}");
+
+        if (!await _orderRepository.DeleteOrderItem(orderItemId))
+            throw new ApiException($"Could Not Delete Order Item With ID {orderItemId}");
     }
 
-    private OrderDto MapToOrderDto(Order order)
+    public async Task<IEnumerable<OrderDto>> GetAllOrders()
     {
-        return new OrderDto()
-        {
-            OrderId = order.OrderId,
-            EmployeeId = order.EmployeeId,
-            ReservationId = order.ReservationId,
-            OrderDate = order.OrderDate
-        };
+        var orders = await _orderRepository.GetAllOrders();
+        return _mapper.Map<IEnumerable<OrderDto>>(orders);
+    }
+
+    public async Task<IEnumerable<OrderItemDto>> GetOrderItems(int orderId)
+    {
+        var orderItems = await _orderRepository.GetOrderItems(orderId);
+        return _mapper.Map<IEnumerable<OrderItemDto>>(orderItems);
+    }
+
+    public async Task<OrderDto> FindOrderById(int orderId)
+    {
+        var order = await _orderRepository.FindOrderById(orderId);
+        if (order is null)
+            throw new NotFoundException($"No Order With ID {orderId} Exists");
+
+        return _mapper.Map<OrderDto>(order);
+    }
+
+    public async Task<OrderItemDto> FindOrderItemById(int orderId, int orderItemId)
+    {
+        if (!await _orderRepository.HasOrderItemById(orderId, orderItemId))
+            throw new NotFoundException($"No OrderItem with ID {orderItemId} Exists For Order {orderId}");
+
+        var orderItem = await _orderRepository.FindOrderItemById(orderItemId);
+
+        return _mapper.Map<OrderItemDto>(orderItem);
     }
 }

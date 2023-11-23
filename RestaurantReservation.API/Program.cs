@@ -17,8 +17,6 @@ builder.Services.AddControllers(options => options.Filters.Add<GlobalExceptionFi
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
 builder.Services
     .AddFluentValidationAutoValidation(configuration =>
         configuration.OverrideDefaultResultFactoryWith<ValidationResultFactory>())
@@ -38,19 +36,20 @@ builder.Services
     .AddScoped<IRestaurantRepository, RestaurantRepository>()
     .AddScoped<IEmployeeRepository, EmployeeRepository>()
     .AddScoped<IMenuItemRepository, MenuItemRepository>()
-    // .AddSingleton<ITableRepository, TableRepository>()
-    // .AddSingleton<IReservationRepository, ReservationRepository>()
-    // .AddSingleton<IOrderRepository, OrderRepository>()
-    ;
+    .AddScoped<IOrderRepository, OrderRepository>()
+    .AddScoped<IReservationRepository, ReservationRepository>()
+    .AddScoped<ITableRepository, TableRepository>();
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services
     .AddScoped<ICustomerService, CustomerService>()
     .AddScoped<IRestaurantService, RestaurantService>()
     .AddScoped<IEmployeeService, EmployeeService>()
     .AddScoped<IMenuItemService, MenuItemService>()
-// .AddSingleton<ITableService, TableService>()
-// .AddSingleton<IReservationService, ReservationService>()
-// .AddSingleton<IOrderService, OrderService>()
+    .AddScoped<IOrderService, OrderService>()
+    .AddScoped<IReservationService, ReservationService>()
+    // .AddScoped<ITableService, TableService>()
     ;
 
 

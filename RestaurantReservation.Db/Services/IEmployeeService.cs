@@ -1,6 +1,5 @@
 ﻿using RestaurantReservation.Db.DTOs;
-using RestaurantReservation.Db.KeylessEntities;
-using RestaurantReservation.Db.Models;
+using RestaurantReservation.Db.ValueObjects;
 
 namespace RestaurantReservation.Db.Services;
 

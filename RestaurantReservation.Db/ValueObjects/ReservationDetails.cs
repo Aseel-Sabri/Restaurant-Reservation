@@ -1,4 +1,4 @@
-﻿namespace RestaurantReservation.Db.KeylessEntities;
+﻿namespace RestaurantReservation.Db.ValueObjects;
 
 public class ReservationDetails
 {

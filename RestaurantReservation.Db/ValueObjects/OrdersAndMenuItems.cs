@@ -1,6 +1,8 @@
-﻿namespace RestaurantReservation.Db.DTOs;
+﻿using RestaurantReservation.Db.DTOs;
 
-public class OrdersAndMenuItemsDto
+namespace RestaurantReservation.Db.ValueObjects;
+
+public class OrdersAndMenuItems
 {
     public int OrderId { get; set; }
     public int EmployeeId { get; set; }

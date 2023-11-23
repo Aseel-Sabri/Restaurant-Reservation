@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using RestaurantReservation.Db.DTOs;
 using RestaurantReservation.Db.Exceptions;
-using RestaurantReservation.Db.KeylessEntities;
 using RestaurantReservation.Db.Models;
 using RestaurantReservation.Db.Repositories;
+using RestaurantReservation.Db.ValueObjects;
 
 namespace RestaurantReservation.Db.Services;
 
