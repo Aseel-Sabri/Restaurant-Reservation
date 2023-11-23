@@ -12,5 +12,5 @@ public interface IEmployeeService
     Task<double> CalculateAverageOrderAmount(int employeeId);
     Task<List<EmployeeDetails>> GetEmployeesDetails();
     Task<EmployeeDto> FindEmployeeById(int employeeId);
-    Task<List<Employee>> GetAllEmployees();
+    Task<IEnumerable<EmployeeDto>> GetAllEmployees();
 }

@@ -93,8 +93,9 @@ public class EmployeeService : IEmployeeService
         return _mapper.Map<EmployeeDto>(employee);
     }
 
-    public async Task<List<Employee>> GetAllEmployees()
+    public async Task<IEnumerable<EmployeeDto>> GetAllEmployees()
     {
-        return await _employeeRepository.GetAllEmployees();
+        var employees = await _employeeRepository.GetAllEmployees();
+        return _mapper.Map<IEnumerable<EmployeeDto>>(employees);
     }
 }

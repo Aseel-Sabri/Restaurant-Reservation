@@ -52,4 +52,10 @@ public class EmployeeController : ControllerBase
         var employeeId = await _employeeService.CreateEmployee(employeeDto);
         return Ok(new { CreatedEmployeeId = employeeId });
     }
+
+    [HttpGet("{employeeId:int}/average-order-amount")]
+    public async Task<ActionResult<double>> GetAverageOrderAmount(int employeeId)
+    {
+        return Ok(await _employeeService.CalculateAverageOrderAmount(employeeId));
+    }
 }
