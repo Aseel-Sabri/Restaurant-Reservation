@@ -9,4 +9,5 @@ public interface ITableRepository
     Task<bool> DeleteTable(int tableId);
     Task<Table?> FindTableById(int tableId);
     Task<bool> HasTableById(int tableId);
+    Task<List<Table>> GetAllTables();
 }

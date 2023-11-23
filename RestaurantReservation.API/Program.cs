@@ -49,8 +49,7 @@ builder.Services
     .AddScoped<IMenuItemService, MenuItemService>()
     .AddScoped<IOrderService, OrderService>()
     .AddScoped<IReservationService, ReservationService>()
-    // .AddScoped<ITableService, TableService>()
-    ;
+    .AddScoped<ITableService, TableService>();
 
 
 var app = builder.Build();
