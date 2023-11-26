@@ -1,6 +1,8 @@
+using System.Reflection;
 using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -45,13 +47,19 @@ builder.Services.AddControllers(options =>
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var filePath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
+    options.IncludeXmlComments(filePath);
+});
 
 builder.Services
     .AddFluentValidationAutoValidation(configuration =>
         configuration.OverrideDefaultResultFactoryWith<ValidationResultFactory>())
     .AddFluentValidationClientsideAdapters();
 builder.Services.AddValidatorsFromAssemblyContaining<ModifyEmployeeValidator>();
+builder.Services.AddFluentValidationRulesToSwagger();
 
 
 var connectionString = builder.Configuration.GetConnectionString("Default");

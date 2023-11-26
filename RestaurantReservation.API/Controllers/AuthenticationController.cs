@@ -16,6 +16,19 @@ public class AuthenticationController : ControllerBase
         _jwtTokenGenerator = jwtTokenGenerator;
     }
 
+    /// <summary>
+    /// Authenticates a user and generates a JWT token.
+    /// </summary>
+    /// <param name="authenticationRequestBody">The authentication request body.</param>
+    /// <returns>
+    ///     <para>200 OK if authentication is successful with the token in the Authorization header</para>
+    ///     <para>401 Unauthorized if authentication fails</para>
+    /// </returns>
+    /// <response code="200">Authentication successful. Returns a JWT token in the Authorization header.</response>
+    /// <response code="401">Authentication failed. Unauthorized access.</response>
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost]
     public async Task<ActionResult> Authenticate(AuthenticationRequestBody authenticationRequestBody)
     {
