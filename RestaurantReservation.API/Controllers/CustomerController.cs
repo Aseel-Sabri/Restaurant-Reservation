@@ -8,6 +8,7 @@ namespace RestaurantReservation.API.Controllers;
 [Authorize]
 [ApiController]
 [Route("/api/customers")]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class CustomerController : ControllerBase
 {
     private readonly ICustomerService _customerService;
@@ -23,7 +24,7 @@ public class CustomerController : ControllerBase
     /// <returns>A list of customer DTOs.</returns>
     /// <response code="200">Returns a list of customers.</response>
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CustomerDto>))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CustomerDto>>> GetCustomers()
     {
@@ -38,7 +39,7 @@ public class CustomerController : ControllerBase
     /// <response code="200">Returns the requested customer.</response>
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CustomerDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [HttpGet("{customerId:int}")]
     public async Task<ActionResult<CustomerDto>> GetCustomer(int customerId)
     {
@@ -53,7 +54,6 @@ public class CustomerController : ControllerBase
     /// <response code="204">If the customer is successfully deleted.</response>
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpDelete("{customerId:int}")]
     public async Task<ActionResult> DeleteCustomer(int customerId)
     {
@@ -71,7 +71,7 @@ public class CustomerController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CustomerDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [HttpPut("{customerId:int}")]
     public async Task<ActionResult<CustomerDto>> UpdateCustomer(int customerId, ModifyCustomerDto customerDto)
     {
@@ -86,7 +86,7 @@ public class CustomerController : ControllerBase
     /// <response code="200">Returns the ID of the created customer.</response>
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [HttpPost]
     public async Task<ActionResult> CreateCustomer(ModifyCustomerDto customerDto)
     {

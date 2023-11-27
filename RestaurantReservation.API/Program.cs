@@ -6,6 +6,7 @@ using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using RestaurantReservation.API.Authentication;
 using RestaurantReservation.API.Filters;
 using RestaurantReservation.API.Validators;
@@ -52,6 +53,28 @@ builder.Services.AddSwaggerGen(options =>
     var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var filePath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
     options.IncludeXmlComments(filePath);
+
+    options.AddSecurityDefinition("RestaurantReservationApiBearerAuth", new OpenApiSecurityScheme()
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        Description = "Input a valid token to access this API"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "RestaurantReservationApiBearerAuth"
+                }
+            },
+            new List<string>()
+        }
+    });
 });
 
 builder.Services

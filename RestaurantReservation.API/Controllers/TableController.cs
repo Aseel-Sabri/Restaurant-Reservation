@@ -8,6 +8,7 @@ namespace RestaurantReservation.API.Controllers;
 [Authorize]
 [ApiController]
 [Route("/api/tables")]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class TableController : ControllerBase
 {
     private readonly ITableService _tableService;
@@ -23,7 +24,7 @@ public class TableController : ControllerBase
     /// <returns>A list of table DTOs.</returns>
     /// <response code="200">Returns a list of tables.</response>
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TableDto>))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TableDto>>> GetTables()
     {
@@ -38,7 +39,7 @@ public class TableController : ControllerBase
     /// <response code="200">Returns the requested table.</response>
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TableDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [HttpGet("{tableId:int}")]
     public async Task<ActionResult<TableDto>> GetTable(int tableId)
     {
@@ -53,7 +54,6 @@ public class TableController : ControllerBase
     /// <response code="204">No content if the deletion is successful.</response>
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpDelete("{tableId:int}")]
     public async Task<ActionResult> DeleteTable(int tableId)
     {
@@ -71,7 +71,7 @@ public class TableController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TableDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [HttpPut("{tableId:int}")]
     public async Task<ActionResult<TableDto>> UpdateTable(int tableId, UpdateTableDto tableDto)
     {
@@ -86,7 +86,7 @@ public class TableController : ControllerBase
     /// <response code="200">Returns the ID of the created table.</response>
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [HttpPost]
     public async Task<ActionResult> CreateTable(CreateTableDto tableDto)
     {

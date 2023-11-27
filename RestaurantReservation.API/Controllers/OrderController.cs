@@ -8,6 +8,7 @@ namespace RestaurantReservation.API.Controllers;
 [Authorize]
 [ApiController]
 [Route("/api/orders")]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class OrderController : ControllerBase
 {
     private readonly IOrderService _orderService;
@@ -23,7 +24,7 @@ public class OrderController : ControllerBase
     /// <returns>A list of order DTOs.</returns>
     /// <response code="200">Returns a list of orders.</response>
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<OrderDto>))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders()
     {
@@ -38,7 +39,7 @@ public class OrderController : ControllerBase
     /// <response code="200">Returns the requested order.</response>
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OrderDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [HttpGet("{orderId:int}")]
     public async Task<ActionResult<OrderDto>> GetOrder(int orderId)
     {
@@ -53,7 +54,6 @@ public class OrderController : ControllerBase
     /// <response code="204">No content if the deletion is successful.</response>
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpDelete("{orderId:int}")]
     public async Task<ActionResult> DeleteOrder(int orderId)
     {
@@ -71,7 +71,7 @@ public class OrderController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OrderDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [HttpPut("{orderId:int}")]
     public async Task<ActionResult<OrderDto>> UpdateOrder(int orderId, ModifyOrderDto orderDto)
     {
@@ -86,7 +86,7 @@ public class OrderController : ControllerBase
     /// <response code="200">Returns the ID of the created order.</response>
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [HttpPost]
     public async Task<ActionResult> CreateOrder(ModifyOrderDto orderDto)
     {

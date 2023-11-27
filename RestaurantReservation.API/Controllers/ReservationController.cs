@@ -9,6 +9,7 @@ namespace RestaurantReservation.API.Controllers;
 [Authorize]
 [ApiController]
 [Route("/api/reservations")]
+[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 public class ReservationController : ControllerBase
 {
     private readonly IReservationService _reservationService;
@@ -29,7 +30,7 @@ public class ReservationController : ControllerBase
     /// <returns>A list of reservation DTOs.</returns>
     /// <response code="200">Returns a list of reservations.</response>
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ReservationDto>))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ReservationDto>>> GetReservations()
     {
@@ -44,7 +45,7 @@ public class ReservationController : ControllerBase
     /// <response code="200">Returns the requested reservation.</response>
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ReservationDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [HttpGet("{reservationId:int}")]
     public async Task<ActionResult<ReservationDto>> GetReservation(int reservationId)
     {
@@ -59,7 +60,6 @@ public class ReservationController : ControllerBase
     /// <response code="204">No content if the deletion is successful.</response>
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpDelete("{reservationId:int}")]
     public async Task<ActionResult> DeleteReservation(int reservationId)
     {
@@ -77,7 +77,7 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ReservationDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [HttpPut("{reservationId:int}")]
     public async Task<ActionResult<ReservationDto>> UpdateReservation(int reservationId,
         ModifyReservationDto reservationDto)
@@ -93,7 +93,7 @@ public class ReservationController : ControllerBase
     /// <response code="200">Returns the ID of the created reservation.</response>
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [HttpPost]
     public async Task<ActionResult> CreateReservation(ModifyReservationDto reservationDto)
     {
@@ -108,8 +108,8 @@ public class ReservationController : ControllerBase
     /// <returns>A list of reservation DTOs for the specified customer.</returns>
     /// <response code="200">Returns a list of reservations for the customer.</response>
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ReservationDto>))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [HttpGet("customer/{customerId:int}")]
     public async Task<ActionResult<IEnumerable<ReservationDto>>> GetReservationsByCustomer(int customerId)
     {
@@ -123,8 +123,8 @@ public class ReservationController : ControllerBase
     /// <returns>A list of ordered menu item DTOs.</returns>
     /// <response code="200">Returns a list of ordered menu items within the reservation.</response>
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<MenuItemDto>))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [HttpGet("{reservationId:int}/menu-items")]
     public async Task<ActionResult<IEnumerable<MenuItemDto>>> GetOrderedMenuItems(int reservationId)
     {
@@ -138,8 +138,8 @@ public class ReservationController : ControllerBase
     /// <returns>A list of orders and menu items DTOs within the reservation.</returns>
     /// <response code="200">Returns a list of orders and menu items within the reservation.</response>
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<OrdersAndMenuItems>))]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [HttpGet("{reservationId:int}/orders")]
     public async Task<ActionResult<IEnumerable<OrdersAndMenuItems>>> GetOrdersAndMenuItems(int reservationId)
     {
