@@ -1,0 +1,72 @@
+﻿using Microsoft.EntityFrameworkCore;
+using RestaurantReservation.Db.KeylessEntities;
+using RestaurantReservation.Db.Models;
+
+namespace RestaurantReservation.Db.DbContext;
+
+public class RestaurantReservationDbContext : Microsoft.EntityFrameworkCore.DbContext
+{
+    public DbSet<Customer> Customers { get; set; }
+    public DbSet<Employee> Employees { get; set; }
+    public DbSet<MenuItem> MenuItems { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Reservation> Reservations { get; set; }
+    public DbSet<Restaurant> Restaurants { get; set; }
+    public DbSet<Table> Tables { get; set; }
+    public DbSet<ReservationDetails> ReservationsDetails { get; set; }
+    public DbSet<EmployeeDetails> EmployeesDetails { get; set; }
+
+    public RestaurantReservationDbContext(DbContextOptions<RestaurantReservationDbContext> options)
+        : base(options)
+    {
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.HasDbFunction(typeof(RestaurantReservationDbContext)
+                .GetMethod(nameof(RestaurantTotalRevenue),
+                    new[] { typeof(int) }))
+            .HasName("fn_RestaurantTotalRevenue");
+
+        modelBuilder.Entity<ReservationDetails>()
+            .HasNoKey()
+            .ToView("vw_ReservationDetails");
+
+        modelBuilder.Entity<EmployeeDetails>()
+            .HasNoKey()
+            .ToView("vw_EmployeeDetails");
+
+        modelBuilder.Entity<MenuItem>()
+            .HasKey(item => item.ItemId);
+
+        modelBuilder.Entity<MenuItem>()
+            .Property(menuItem => menuItem.Price)
+            .HasColumnType("decimal(18, 2)");
+
+
+        foreach (var foreignKey in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+        {
+            foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
+        }
+
+        modelBuilder.Entity<Order>(orderBuilder =>
+            {
+                orderBuilder.HasMany(order => order.OrderItems)
+                    .WithOne(orderItem => orderItem.Order)
+                    .HasForeignKey(orderItem => orderItem.OrderId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                orderBuilder.HasOne(order => order.Reservation)
+                    .WithMany()
+                    .HasForeignKey(order => order.ReservationId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            }
+        );
+
+        DataSeeder.SeedData(modelBuilder);
+    }
+
+    public decimal RestaurantTotalRevenue(int restaurantId)
+        => throw new NotSupportedException();
+}
