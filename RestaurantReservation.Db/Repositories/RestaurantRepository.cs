@@ -50,4 +50,9 @@ public class RestaurantRepository : IRestaurantRepository
     {
         return await FindRestaurantById(restaurantId) is not null;
     }
+
+    public async Task<List<Restaurant>> GetAllRestaurants()
+    {
+        return await _dbContext.Restaurants.ToListAsync();
+    }
 }

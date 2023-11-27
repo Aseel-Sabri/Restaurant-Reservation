@@ -1,5 +1,6 @@
-﻿using FluentResults;
+﻿using AutoMapper;
 using RestaurantReservation.Db.DTOs;
+using RestaurantReservation.Db.Exceptions;
 using RestaurantReservation.Db.Models;
 using RestaurantReservation.Db.Repositories;
 
@@ -9,70 +10,67 @@ public class TableService : ITableService
 {
     private readonly ITableRepository _tableRepository;
     private readonly IRestaurantRepository _restaurantRepository;
+    private readonly IMapper _mapper;
 
-    public TableService(ITableRepository tableRepository, IRestaurantRepository restaurantRepository)
+    public TableService(ITableRepository tableRepository, IRestaurantRepository restaurantRepository, IMapper mapper)
     {
         _tableRepository = tableRepository;
         _restaurantRepository = restaurantRepository;
+        _mapper = mapper;
     }
 
-    public async Task<Result<int>> CreateTable(TableDto tableDto)
+    public async Task<int> CreateTable(CreateTableDto tableDto)
     {
-        if (tableDto.HasAnyNullOrEmptyFields())
-        {
-            return Result.Fail($"All Table Fields Must Be Provided");
-        }
-
         if (!await _restaurantRepository.HasRestaurantById((int)tableDto.RestaurantId!))
-        {
-            return Result.Fail($"No Restaurant With ID {tableDto.RestaurantId} Exists");
-        }
+            throw new NotFoundException($"No Restaurant With ID {tableDto.RestaurantId} Exists");
 
-        var table = new Table()
-        {
-            RestaurantId = (int)tableDto.RestaurantId,
-            Capacity = (int)tableDto.Capacity!
-        };
+        var table = _mapper.Map<Table>(tableDto);
+
         var tableId = await _tableRepository.CreateTable(table);
-        return Result.Ok(tableId);
+        return tableId;
     }
 
-    public async Task<Result<TableDto>> UpdateTableCapacity(int tableId, int capacity)
+    public async Task<TableDto> UpdateTable(int tableId, UpdateTableDto tableDto)
     {
         var table = await _tableRepository.FindTableById(tableId);
         if (table is null)
-            return Result.Fail($"No Table with ID {tableId} Exists");
+            throw new NotFoundException($"No Table with ID {tableId} Exists");
 
-        table.Capacity = capacity;
+        _mapper.Map(tableDto, table);
 
         var updatedTable = await _tableRepository.UpdateTable(table);
-        return Result.Ok(MapToTableDto(updatedTable));
+        return _mapper.Map<TableDto>(updatedTable);
     }
 
-    public async Task<Result> DeleteTable(int tableId)
+    public async Task DeleteTable(int tableId)
     {
         if (!await _tableRepository.HasTableById(tableId))
-            return Result.Fail($"No Table With ID {tableId} Exists");
+            throw new NotFoundException($"No Table With ID {tableId} Exists");
 
         try
         {
-            return Result.OkIf(await _tableRepository.DeleteTable(tableId),
-                $"Could Not Delete Table With ID {tableId}");
+            if (!await _tableRepository.DeleteTable(tableId))
+                throw new ApiException($"Could Not Delete Table With ID {tableId}");
         }
         catch (Exception e)
         {
-            return Result.Fail(
-                $"Could Not Delete Table With ID {tableId}, It May Have Related Data");
+            throw new ApiException(
+                $"Could Not Delete Table With ID {tableId}, It May Have Related Data", e);
         }
     }
 
-    private TableDto MapToTableDto(Table table)
+    public async Task<IEnumerable<TableDto>> GetAllTables()
     {
-        return new TableDto()
-        {
-            TableId = table.TableId,
-            RestaurantId = table.RestaurantId,
-            Capacity = table.Capacity
-        };
+        var tables = await _tableRepository.GetAllTables();
+        return _mapper.Map<IEnumerable<TableDto>>(tables);
+    }
+
+    public async Task<TableDto> FindTableById(int tableId)
+    {
+        var table = await _tableRepository.FindTableById(tableId);
+        if (table is null)
+            throw new NotFoundException($"No Table With ID {tableId} Exists");
+
+        return _mapper.Map<TableDto>(table);
     }
 }

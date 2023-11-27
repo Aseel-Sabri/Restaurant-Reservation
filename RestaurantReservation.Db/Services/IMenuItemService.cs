@@ -1,12 +1,13 @@
-﻿using FluentResults;
-using RestaurantReservation.Db.DTOs;
+﻿using RestaurantReservation.Db.DTOs;
 
 namespace RestaurantReservation.Db.Services;
 
 public interface IMenuItemService
 {
-    Task<Result<int>> CreateItem(MenuItemDto menuItemDto);
-    Task<Result<MenuItemDto>> UpdateItem(MenuItemDto menuItemDto);
-    Task<Result> DeleteItem(int menuItemId);
-    Task<Result<List<MenuItemDto>>> ListOrderedMenuItems(int reservationId);
+    Task<int> CreateItem(CreateMenuItemDto menuItemDto);
+    Task<MenuItemDto> UpdateItem(int menuItemId, UpdateMenuItemDto menuItemDto);
+    Task DeleteItem(int menuItemId);
+    Task<IEnumerable<MenuItemDto>> GetAllItems();
+    Task<MenuItemDto> FindItemById(int menuItemId);
+    Task<IEnumerable<MenuItemDto>> ListOrderedMenuItems(int reservationId);
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RestaurantReservation.Db.DbContext;
-using RestaurantReservation.Db.KeylessEntities;
 using RestaurantReservation.Db.Models;
+using RestaurantReservation.Db.ValueObjects;
 
 namespace RestaurantReservation.Db.Repositories;
 
@@ -51,6 +51,11 @@ public class EmployeeRepository : IEmployeeRepository
     public async Task<List<EmployeeDetails>> GetEmployeesDetails()
     {
         return await _dbContext.EmployeesDetails.ToListAsync();
+    }
+
+    public async Task<List<Employee>> GetAllEmployees()
+    {
+        return await _dbContext.Employees.ToListAsync();
     }
 
     public async Task<Employee?> FindEmployeeById(int employeeId)

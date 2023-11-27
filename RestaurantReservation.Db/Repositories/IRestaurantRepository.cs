@@ -10,4 +10,5 @@ public interface IRestaurantRepository
     Task<Restaurant?> FindRestaurantById(int restaurantId);
     Task<bool> HasRestaurantById(int restaurantId);
     Task<double> CalculateRestaurantTotalRevenue(int restaurantId);
+   Task<List<Restaurant>> GetAllRestaurants();
 }

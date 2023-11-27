@@ -1,12 +1,13 @@
-﻿using FluentResults;
-using RestaurantReservation.Db.DTOs;
+﻿using RestaurantReservation.Db.DTOs;
 
 namespace RestaurantReservation.Db.Services;
 
 public interface ICustomerService
 {
-    Task<Result<int>> CreateCustomer(CustomerDto customerDto);
-    Task<Result<CustomerDto>> UpdateCustomer(CustomerDto customerDto);
-    Task<Result> DeleteCustomer(int customerId);
-    Task<List<CustomerDto>> FindCustomersWithPartySizeGreaterThan(int partySize);
+    Task<int> CreateCustomer(ModifyCustomerDto customerDto);
+    Task<CustomerDto> UpdateCustomer(int customerId, ModifyCustomerDto customerDto);
+    Task DeleteCustomer(int customerId);
+    Task<IEnumerable<CustomerDto>> FindCustomersWithPartySizeGreaterThan(int partySize);
+    Task<IEnumerable<CustomerDto>> GetAllCustomers();
+    Task<CustomerDto> FindCustomerById(int customerId);
 }

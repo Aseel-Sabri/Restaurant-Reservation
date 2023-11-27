@@ -10,4 +10,5 @@ public interface IMenuItemRepository
     Task<MenuItem?> FindItemById(int itemId);
     Task<bool> HasItemById(int itemId);
     Task<List<MenuItem>> ListOrderedMenuItems(int reservationId);
+    Task<List<MenuItem>> GetAllMenuItems();
 }

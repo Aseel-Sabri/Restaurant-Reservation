@@ -43,4 +43,9 @@ public class TableRepository : ITableRepository
     {
         return await FindTableById(tableId) is not null;
     }
+
+    public async Task<List<Table>> GetAllTables()
+    {
+        return await _dbContext.Tables.ToListAsync();
+    }
 }

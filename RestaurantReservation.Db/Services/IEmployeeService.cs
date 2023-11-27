@@ -1,15 +1,16 @@
-﻿using FluentResults;
-using RestaurantReservation.Db.DTOs;
-using RestaurantReservation.Db.KeylessEntities;
+﻿using RestaurantReservation.Db.DTOs;
+using RestaurantReservation.Db.ValueObjects;
 
 namespace RestaurantReservation.Db.Services;
 
 public interface IEmployeeService
 {
-    Task<Result<int>> CreateEmployee(EmployeeDto employeeDto);
-    Task<Result<EmployeeDto>> UpdateEmployee(EmployeeDto employeeDto);
-    Task<Result> DeleteEmployee(int employeeId);
+    Task<int> CreateEmployee(ModifyEmployeeDto employeeDto);
+    Task<EmployeeDto> UpdateEmployee(int employeeId, ModifyEmployeeDto employeeDto);
+    Task DeleteEmployee(int employeeId);
     Task<List<EmployeeDto>> GetManagers();
-    Task<Result<double>> CalculateAverageOrderAmount(int employeeId);
+    Task<double> CalculateAverageOrderAmount(int employeeId);
     Task<List<EmployeeDetails>> GetEmployeesDetails();
+    Task<EmployeeDto> FindEmployeeById(int employeeId);
+    Task<IEnumerable<EmployeeDto>> GetAllEmployees();
 }

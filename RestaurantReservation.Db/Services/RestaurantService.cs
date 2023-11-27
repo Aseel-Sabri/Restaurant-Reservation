@@ -1,5 +1,6 @@
-﻿using FluentResults;
+﻿using AutoMapper;
 using RestaurantReservation.Db.DTOs;
+using RestaurantReservation.Db.Exceptions;
 using RestaurantReservation.Db.Models;
 using RestaurantReservation.Db.Repositories;
 
@@ -8,81 +9,70 @@ namespace RestaurantReservation.Db.Services;
 public class RestaurantService : IRestaurantService
 {
     private readonly IRestaurantRepository _restaurantRepository;
+    private readonly IMapper _mapper;
 
-    public RestaurantService(IRestaurantRepository restaurantRepository)
+    public RestaurantService(IRestaurantRepository restaurantRepository, IMapper mapper)
     {
         _restaurantRepository = restaurantRepository;
+        _mapper = mapper;
     }
 
-    public async Task<Result<int>> CreateRestaurant(RestaurantDto restaurantDto)
+    public async Task<int> CreateRestaurant(ModifyRestaurantDto restaurantDto)
     {
-        if (restaurantDto.HasAnyNullOrEmptyFields())
-        {
-            return Result.Fail($"All Restaurant Fields Must Be Provided");
-        }
-
-        var restaurant = new Restaurant()
-        {
-            RestaurantId = restaurantDto.RestaurantId,
-            Address = restaurantDto.Address,
-            OpeningHours = restaurantDto.OpeningHours,
-            PhoneNumber = restaurantDto.PhoneNumber,
-            Name = restaurantDto.Name
-        };
+        var restaurant = _mapper.Map<Restaurant>(restaurantDto);
         var restaurantId = await _restaurantRepository.CreateRestaurant(restaurant);
-        return Result.Ok(restaurantId);
+        return restaurantId;
     }
 
-    public async Task<Result<RestaurantDto>> UpdateRestaurant(RestaurantDto restaurantDto)
+    public async Task<RestaurantDto> UpdateRestaurant(int restaurantId, ModifyRestaurantDto restaurantDto)
     {
-        var restaurant = await _restaurantRepository.FindRestaurantById(restaurantDto.RestaurantId);
+        var restaurant = await _restaurantRepository.FindRestaurantById(restaurantId);
         if (restaurant is null)
-            return Result.Fail($"No Restaurant with ID {restaurantDto.RestaurantId} Exists");
+            throw new NotFoundException($"No Restaurant with ID {restaurantId} Exists");
 
-        restaurant.Name = restaurantDto.Name ?? restaurant.Name;
-        restaurant.Address = restaurantDto.Address ?? restaurant.Address;
-        // TODO: Validate phone number & opening hours format
-        restaurant.PhoneNumber = restaurantDto.PhoneNumber ?? restaurant.PhoneNumber;
-        restaurant.OpeningHours = restaurantDto.OpeningHours ?? restaurant.OpeningHours;
+        _mapper.Map(restaurantDto, restaurant);
 
         var updatedRestaurant = await _restaurantRepository.UpdateRestaurant(restaurant);
-        return Result.Ok(MapToRestaurantDto(updatedRestaurant));
+        return _mapper.Map<RestaurantDto>(updatedRestaurant);
     }
 
-    public async Task<Result> DeleteRestaurant(int restaurantId)
+    public async Task DeleteRestaurant(int restaurantId)
     {
         if (!await _restaurantRepository.HasRestaurantById(restaurantId))
-            return Result.Fail($"No Restaurant With ID {restaurantId} Exists");
+            throw new NotFoundException($"No Restaurant With ID {restaurantId} Exists");
 
         try
         {
-            return Result.OkIf(await _restaurantRepository.DeleteRestaurant(restaurantId),
-                $"Could Not Delete Restaurant With ID {restaurantId}");
+            if (!await _restaurantRepository.DeleteRestaurant(restaurantId))
+                throw new ApiException($"Could Not Delete Restaurant With ID {restaurantId}");
         }
         catch (Exception e)
         {
-            return Result.Fail(
-                $"Could Not Delete Restaurant With ID {restaurantId}, It May Have Related Data");
+            throw new ApiException(
+                $"Could Not Delete Restaurant With ID {restaurantId}, It May Have Related Data", e);
         }
     }
 
-    public async Task<Result<double>> CalculateRestaurantTotalRevenue(int restaurantId)
+    public async Task<double> CalculateRestaurantTotalRevenue(int restaurantId)
     {
         if (!await _restaurantRepository.HasRestaurantById(restaurantId))
-            return Result.Fail($"No Restaurant With ID {restaurantId} Exists");
+            throw new NotFoundException($"No Restaurant With ID {restaurantId} Exists");
 
         return await _restaurantRepository.CalculateRestaurantTotalRevenue(restaurantId);
     }
 
-    private RestaurantDto MapToRestaurantDto(Restaurant restaurant)
+    public async Task<IEnumerable<RestaurantDto>> GetAllRestaurants()
     {
-        return new RestaurantDto()
-        {
-            RestaurantId = restaurant.RestaurantId,
-            Address = restaurant.Address,
-            OpeningHours = restaurant.OpeningHours,
-            PhoneNumber = restaurant.PhoneNumber,
-            Name = restaurant.Name
-        };
+        var restaurants = await _restaurantRepository.GetAllRestaurants();
+        return _mapper.Map<IEnumerable<RestaurantDto>>(restaurants);
+    }
+
+    public async Task<RestaurantDto> FindRestaurantById(int restaurantId)
+    {
+        var restaurant = await _restaurantRepository.FindRestaurantById(restaurantId);
+        if (restaurant is null)
+            throw new NotFoundException($"No Restaurant with ID {restaurantId} Exists");
+
+        return _mapper.Map<RestaurantDto>(restaurant);
     }
 }
